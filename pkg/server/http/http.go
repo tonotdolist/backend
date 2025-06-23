@@ -7,17 +7,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"net/http"
-	"time"
 )
 
 type Option func(s *Server)
 type Server struct {
 	*gin.Engine
-	logger          zerolog.Logger
-	httpSrv         *http.Server
-	host            string
-	port            int16
-	shutdownTimeout int
+	logger  zerolog.Logger
+	httpSrv *http.Server
+	host    string
+	port    int16
 }
 
 func NewServer(engine *gin.Engine, logger zerolog.Logger, options ...Option) *Server {
@@ -49,8 +47,6 @@ func (s *Server) Start() {
 func (s *Server) Stop(ctx context.Context) error {
 	s.logger.Info().Msg("stopping server")
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(s.shutdownTimeout))
-	defer cancel()
 	if err := s.httpSrv.Shutdown(ctx); err != nil {
 		s.logger.Fatal().Msg("server forced to shutdown")
 	}
@@ -68,11 +64,5 @@ func WithHost(host string) Option {
 func WithPort(port int16) Option {
 	return func(s *Server) {
 		s.port = port
-	}
-}
-
-func WithShutdownTimeout(timeout int) Option {
-	return func(s *Server) {
-		s.shutdownTimeout = timeout
 	}
 }
