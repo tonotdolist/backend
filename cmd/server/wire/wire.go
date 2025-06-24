@@ -11,10 +11,19 @@ import (
 	"github.com/google/wire"
 )
 
+var repositorySet = wire.NewSet()
+
+var serviceSet = wire.NewSet()
+
+var handlerSet = wire.NewSet()
+
 func InitializeApp() *app.App {
 	panic(wire.Build(
 		app.NewApp,
 		server.NewHTTPServer,
 		log.NewLogger,
+		repositorySet,
+		serviceSet,
+		handlerSet,
 	))
 }
