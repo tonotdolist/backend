@@ -7,19 +7,22 @@ import (
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
-	"os"
 	"time"
 )
-
-func NewLogger() zerolog.Logger {
-	return zerolog.New(os.Stdout).With().Timestamp().Logger()
-}
 
 type GormLogger struct {
 	logger zerolog.Logger
 
 	ignoreNotFoundErr bool
 	slowThreshold     int64
+}
+
+func NewGormLogger(logger zerolog.Logger, ignoreNotFoundErr bool, slowThreshold int64) *GormLogger {
+	return &GormLogger{
+		logger:            logger,
+		ignoreNotFoundErr: ignoreNotFoundErr,
+		slowThreshold:     slowThreshold,
+	}
 }
 
 func (gl *GormLogger) LogMode(level logger.LogLevel) logger.Interface {
@@ -65,9 +68,6 @@ func (gl *GormLogger) Error(ctx context.Context, msg string, args ...interface{}
 }
 
 func (gl *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
-	if gl.logger.GetLevel() == zerolog.Disabled {
-		return
-	}
 	elapsed := time.Since(begin).Milliseconds()
 	sql, rows := fc()
 
