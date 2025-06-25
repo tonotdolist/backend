@@ -20,3 +20,18 @@ func ValidateRequiredKeys(logger zerolog.Logger, v *viper.Viper) {
 		}
 	}
 }
+
+func NewConfig(logger zerolog.Logger, path string) *viper.Viper {
+	conf := viper.New()
+	conf.SetConfigName(path)
+
+	err := conf.ReadInConfig()
+
+	if err != nil {
+		zerolog.DefaultContextLogger.Panic().Err(err).Msg("failed to load app config")
+	}
+
+	ValidateRequiredKeys(logger, conf)
+
+	return conf
+}

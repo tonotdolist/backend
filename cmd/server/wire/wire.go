@@ -4,26 +4,29 @@
 package wire
 
 import (
+	"github.com/google/wire"
+	"github.com/rs/zerolog"
+	"github.com/spf13/viper"
 	"tonotdolist/internal/app"
 	"tonotdolist/internal/server"
-	"tonotdolist/pkg/log"
-
-	"github.com/google/wire"
 )
 
-var repositorySet = wire.NewSet()
+//var repositorySet = wire.NewSet()
+//
+//var serviceSet = wire.NewSet()
+//
+//var handlerSet = wire.NewSet()
 
-var serviceSet = wire.NewSet()
-
-var handlerSet = wire.NewSet()
-
-func InitializeApp() *app.App {
+func InitializeApp(logger zerolog.Logger, conf *viper.Viper) *app.App {
 	panic(wire.Build(
-		app.NewApp,
+		//log.NewGormLogger,
+
+		//repositorySet,
+		//serviceSet,
+		//handlerSet,
+
 		server.NewHTTPServer,
-		log.NewLogger,
-		repositorySet,
-		serviceSet,
-		handlerSet,
+
+		app.NewApp,
 	))
 }
