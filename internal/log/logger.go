@@ -18,9 +18,7 @@ func init() {
 }
 
 func NewLogger() zerolog.Logger {
-	level := zerolog.DebugLevel
-
-	return zerolog.New(os.Stdout).Level(level).With().Timestamp().Logger()
+	return zerolog.New(os.Stdout).Level(zerolog.DebugLevel).With().Timestamp().Logger()
 }
 
 func NewGormLogger(logger zerolog.Logger, viper *viper.Viper) *log.GormLogger {
