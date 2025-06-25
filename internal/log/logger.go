@@ -7,8 +7,13 @@ import (
 	"tonotdolist/pkg/log"
 )
 
-func NewLogger() zerolog.Logger {
-	return zerolog.New(os.Stdout).With().Timestamp().Logger()
+func NewLogger(viper *viper.Viper) zerolog.Logger {
+	level := zerolog.DebugLevel
+	if viper.GetBool("prod") {
+		level = zerolog.WarnLevel
+	}
+
+	return zerolog.New(os.Stdout).Level(level).With().Timestamp().Logger()
 }
 
 func NewGormLogger(logger zerolog.Logger, viper *viper.Viper) *log.GormLogger {
