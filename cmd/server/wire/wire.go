@@ -11,7 +11,10 @@ import (
 	"tonotdolist/internal/server"
 )
 
-//var repositorySet = wire.NewSet()
+//var repositorySet = wire.NewSet(
+//	repository.NewDB,
+//	repository.NewRepository,
+//	)
 //
 //var serviceSet = wire.NewSet()
 //
