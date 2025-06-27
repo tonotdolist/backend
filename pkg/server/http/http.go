@@ -15,7 +15,7 @@ type Server struct {
 	logger  zerolog.Logger
 	httpSrv *http.Server
 	host    string
-	port    int16
+	port    uint16
 }
 
 func NewServer(engine *gin.Engine, logger zerolog.Logger, options ...Option) *Server {
@@ -61,7 +61,7 @@ func WithHost(host string) Option {
 	}
 }
 
-func WithPort(port int16) Option {
+func WithPort(port uint16) Option {
 	return func(s *Server) {
 		s.port = port
 	}
