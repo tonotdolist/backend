@@ -22,13 +22,3 @@ func HandleError(ctx *gin.Context, err *Error, data interface{}) {
 	resp := Response{Code: err.Code, Message: err.Message, Data: data}
 	ctx.JSON(err.HTTPCode, resp)
 }
-
-type Error struct {
-	HTTPCode int
-	Code     int
-	Message  string
-}
-
-func newError(httpCode int, code int, msg string) *Error {
-	return &Error{httpCode, code, msg}
-}

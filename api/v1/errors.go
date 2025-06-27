@@ -7,3 +7,17 @@ var (
 	ErrNotFound            = newError(404, 404, "Not Found")
 	ErrInternalServerError = newError(500, 500, "Internal Server Error")
 )
+
+type Error struct {
+	HTTPCode int
+	Code     int
+	Message  string
+}
+
+func (e *Error) Error() string {
+	return e.Message
+}
+
+func newError(httpCode int, code int, msg string) *Error {
+	return &Error{httpCode, code, msg}
+}
