@@ -41,3 +41,5 @@ func (up *userRepository) GetByEmail(ctx context.Context, email string) (*model.
 func (up *userRepository) CreateUser(context.Context, *model.User) error {
 	panic("implement me")
 }
+
+var _ UserRepository = (*userRepository)(nil)
