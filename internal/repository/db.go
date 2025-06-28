@@ -24,16 +24,16 @@ func NewDB(logger zerolog.Logger, gormLogger log.GormLogger, config *viper.Viper
 		Logger: &gormLogger,
 	})
 	if err != nil {
-		logger.Panic().Err(err).Msg("unable to connect to db")
+		logger.Fatal().Err(err).Msg("unable to connect to db")
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		logger.Panic().Err(err).Msg("unable to get sql.DB")
+		logger.Fatal().Err(err).Msg("unable to get sql.DB")
 	}
 
 	if err := sqlDB.Ping(); err != nil {
-		logger.Panic().Err(err).Msg("unable to ping db")
+		logger.Fatal().Err(err).Msg("unable to ping db")
 	}
 
 	return db

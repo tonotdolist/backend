@@ -16,7 +16,7 @@ func RegisterRequiredKey(keys ...string) {
 func ValidateRequiredKeys(logger zerolog.Logger, v *viper.Viper) {
 	for _, key := range requiredKeys {
 		if !v.IsSet(key) {
-			logger.Panic().Str("config_key", key).Msg("missing required config key")
+			logger.Fatal().Str("config_key", key).Msg("missing required config key")
 		}
 	}
 }
@@ -28,7 +28,7 @@ func NewConfig(logger zerolog.Logger, path string) *viper.Viper {
 	err := conf.ReadInConfig()
 
 	if err != nil {
-		zerolog.DefaultContextLogger.Panic().Err(err).Msg("failed to load app config")
+		zerolog.DefaultContextLogger.Fatal().Err(err).Msg("failed to load app config")
 	}
 
 	ValidateRequiredKeys(logger, conf)

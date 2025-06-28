@@ -39,7 +39,7 @@ func (s *Server) Start() {
 
 	go func() {
 		if err := s.httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			s.logger.Panic().Err(err).Msg("error starting server")
+			s.logger.Fatal().Err(err).Msg("error starting server")
 		}
 	}()
 }
@@ -48,7 +48,7 @@ func (s *Server) Stop(ctx context.Context) error {
 	s.logger.Info().Msg("stopping server")
 
 	if err := s.httpSrv.Shutdown(ctx); err != nil {
-		s.logger.Fatal().Msg("server forced to shutdown")
+		s.logger.Error().Msg("server forced to shutdown")
 	}
 
 	s.logger.Info().Msg("server stopped")
