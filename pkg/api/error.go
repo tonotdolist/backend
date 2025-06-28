@@ -10,7 +10,7 @@ func RegisterError(apiVersion uint, target interface{}, mapping error) {
 		errors[apiVersion] = versionMapping
 	}
 
-	versionMapping[mapping] = target
+	errors[apiVersion][mapping] = target
 }
 
 func getError(version ApiVersionHandler, mapping error) interface{} {
