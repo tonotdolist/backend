@@ -11,7 +11,8 @@ import (
 
 type UserRepository interface {
 	GetByEmail(context.Context, string) (*model.User, error)
-	CreateUser(context.Context, *model.User) error
+	Create(context.Context, *model.User) error
+	Update(context.Context, *model.User) error
 }
 
 type userRepository struct {
@@ -38,7 +39,11 @@ func (up *userRepository) GetByEmail(ctx context.Context, email string) (*model.
 	return &user, nil
 }
 
-func (up *userRepository) CreateUser(context.Context, *model.User) error {
+func (up *userRepository) Create(context.Context, *model.User) error {
+	panic("implement me")
+}
+
+func (up *userRepository) Update(ctx context.Context, user *model.User) error {
 	panic("implement me")
 }
 
