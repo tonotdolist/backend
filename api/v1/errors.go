@@ -1,12 +1,17 @@
 package v1
 
-var (
-	ErrSuccess             = newError(200, 200, "Ok")
-	ErrBadRequest          = newError(400, 400, "Bad Request")
-	ErrUnauthorized        = newError(401, 401, "Unauthorized")
-	ErrNotFound            = newError(404, 404, "Not Found")
-	ErrInternalServerError = newError(500, 500, "Internal Server Error")
+import (
+	"tonotdolist/internal/common"
+	"tonotdolist/pkg/api"
 )
+
+func init() {
+	registerError(200, 200, "Ok", common.ErrSuccess)
+	registerError(400, 400, "Bad Request", common.ErrBadRequest)
+	registerError(404, 404, "Not Found", common.ErrNotFound)
+}
+
+var internalServerErr = newError(500, 500, "Internal Error")
 
 type Error struct {
 	HTTPCode int
@@ -14,10 +19,10 @@ type Error struct {
 	Message  string
 }
 
-func (e *Error) Error() string {
-	return e.Message
+func registerError(httpCode int, code int, msg string, internalMapping error) {
+	api.RegisterError(version, newError(httpCode, code, msg), internalMapping)
 }
 
 func newError(httpCode int, code int, msg string) *Error {
-	return &Error{httpCode, code, msg}
+	return &Error{HTTPCode: httpCode, Code: code, Message: msg}
 }

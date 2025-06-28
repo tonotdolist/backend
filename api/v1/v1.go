@@ -1,8 +1,23 @@
 package v1
 
-import (
-	"github.com/gin-gonic/gin"
-)
+import "tonotdolist/pkg/api"
+
+const version = 1
+
+func init() {
+	api.RegisterApiVersion(&apiVersionHandler{})
+}
+
+type apiVersionHandler struct {
+}
+
+func (a *apiVersionHandler) GetApiVersion() uint {
+	return version
+}
+
+func (a *apiVersionHandler) GetInternalError() interface{} {
+	return internalServerErr
+}
 
 type Response struct {
 	Code    int         `json:"code"`
@@ -10,15 +25,11 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
-func HandleSuccess(ctx *gin.Context, data interface{}) {
-	HandleError(ctx, ErrSuccess, data)
-}
-
-func HandleError(ctx *gin.Context, err *Error, data interface{}) {
-	if data == nil {
-		data = map[string]string{}
-	}
-
+func (a *apiVersionHandler) HandleResponse(rawError interface{}, data interface{}) (int, interface{}) {
+	err := rawError.(*Error)
 	resp := Response{Code: err.Code, Message: err.Message, Data: data}
-	ctx.JSON(err.HTTPCode, resp)
+
+	return err.HTTPCode, resp
 }
+
+var _ api.ApiVersionHandler = (*apiVersionHandler)(nil)
