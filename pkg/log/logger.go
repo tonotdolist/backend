@@ -3,7 +3,6 @@ package log
 import (
 	"context"
 	"errors"
-	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -18,9 +17,9 @@ type GormLogger struct {
 	slowThreshold     int64
 }
 
-func GetLoggerFromGinContext(ctx *gin.Context) (zerolog.Logger, error) {
-	rawLogger, ok := ctx.Get("logger")
-	if !ok {
+func GetLoggerFromContext(ctx context.Context) (zerolog.Logger, error) {
+	rawLogger := ctx.Value("logger")
+	if rawLogger == nil {
 		return zerolog.Nop(), errors.New("logger not found in context")
 	}
 	logger1, ok := rawLogger.(zerolog.Logger)
