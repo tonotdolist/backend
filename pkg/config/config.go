@@ -28,7 +28,7 @@ func NewConfig(logger zerolog.Logger, path string) *viper.Viper {
 	err := conf.ReadInConfig()
 
 	if err != nil {
-		zerolog.DefaultContextLogger.Fatal().Err(err).Msg("failed to load app config")
+		logger.Fatal().Err(err).Msg("failed to load app config")
 	}
 
 	ValidateRequiredKeys(logger, conf)
