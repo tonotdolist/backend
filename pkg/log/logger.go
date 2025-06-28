@@ -3,6 +3,7 @@ package log
 import (
 	"context"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -15,6 +16,19 @@ type GormLogger struct {
 
 	ignoreNotFoundErr bool
 	slowThreshold     int64
+}
+
+func GetLoggerFromGinContext(ctx *gin.Context) (zerolog.Logger, error) {
+	rawLogger, ok := ctx.Get("logger")
+	if !ok {
+		return zerolog.Nop(), errors.New("logger not found in context")
+	}
+	logger1, ok := rawLogger.(zerolog.Logger)
+	if !ok {
+		return zerolog.Nop(), errors.New("cannot cast object in context to logger")
+	}
+
+	return logger1, nil
 }
 
 func NewGormLogger(logger zerolog.Logger, ignoreNotFoundErr bool, slowThreshold int64) *GormLogger {
