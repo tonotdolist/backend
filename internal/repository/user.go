@@ -2,7 +2,10 @@ package repository
 
 import (
 	"context"
+	"errors"
 	"github.com/rs/zerolog"
+	"gorm.io/gorm"
+	"tonotdolist/internal/common"
 	"tonotdolist/internal/model"
 )
 
@@ -24,7 +27,15 @@ func NewUserRepository(repository *Repository) UserRepository {
 }
 
 func (up *userRepository) GetByEmail(ctx context.Context, email string) (*model.User, error) {
-	panic("implement me")
+	var user model.User
+	err := up.db.WithContext(ctx).Where("email = ?", email).First(&user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, common.ErrNotFound
+		}
+		return nil, err
+	}
+	return &user, nil
 }
 
 func (up *userRepository) CreateUser(context.Context, *model.User) error {
