@@ -5,7 +5,7 @@ import (
 	"errors"
 	"github.com/rs/zerolog"
 	"gorm.io/gorm"
-	"tonotdolist/internal/common"
+	"tonotdolist/common"
 	"tonotdolist/internal/model"
 )
 
