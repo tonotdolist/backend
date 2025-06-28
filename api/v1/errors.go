@@ -1,7 +1,7 @@
 package v1
 
 import (
-	"tonotdolist/internal/common"
+	"tonotdolist/common"
 	"tonotdolist/pkg/api"
 )
 
