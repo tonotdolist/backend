@@ -11,8 +11,8 @@ import (
 
 type UserRepository interface {
 	GetByEmail(context.Context, string) (*model.User, error)
-	Create(*model.User) error
-	Update(*model.User) error
+	Create(context.Context, *model.User) error
+	Update(context.Context, *model.User) error
 }
 
 type userRepository struct {
@@ -40,12 +40,12 @@ func (up *userRepository) GetByEmail(ctx context.Context, email string) (*model.
 	return &user, nil
 }
 
-func (up *userRepository) Create(user *model.User) error {
-	return up.db.Create(user).Error
+func (up *userRepository) Create(ctx context.Context, user *model.User) error {
+	return up.db.WithContext(context.WithoutCancel(ctx)).Create(user).Error
 }
 
-func (up *userRepository) Update(user *model.User) error {
-	return up.db.Save(user).Error
+func (up *userRepository) Update(ctx context.Context, user *model.User) error {
+	return up.db.WithContext(context.WithoutCancel(ctx)).Save(user).Error
 }
 
 var _ UserRepository = (*userRepository)(nil)
