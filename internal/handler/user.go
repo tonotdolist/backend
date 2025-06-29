@@ -54,5 +54,27 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
-	panic("implement me")
+	logger := log.GetLoggerFromContext(ctx)
+	version := ctx.GetUint("version")
+
+	rawReq, err := api.BindJSON(ctx, version, registerRequestType)
+
+	defer h.responder.HandleResponse(version, ctx, err, nil)
+
+	if err != nil {
+		if !errors.Is(err, common.ErrBadRequest) {
+			logger.Error().Err(err).Msg("unable to bind json")
+		}
+
+		return
+	}
+
+	req := rawReq.(*common.UserRegisterRequest)
+	err = h.userService.Register(ctx, req)
+
+	if err != nil {
+		if !errors.Is(err, common.ErrUnauthorized) {
+			logger.Error().Err(err).Msg("error handling register request")
+		}
+	}
 }
