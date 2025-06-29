@@ -46,6 +46,7 @@ func (rr *RequestResponder) HandleResponse(version uint, ctx *gin.Context, err e
 		ctx.JSON(500, map[string]string{})
 
 		rr.logger.Error().Uint("api_version", version).Msg("unknown api version")
+		return
 	}
 
 	httpCode, resp := apiHandler.HandleResponse(getError(apiHandler, err), data)
