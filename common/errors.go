@@ -2,6 +2,8 @@ package common
 
 import "errors"
 
+var errorList = make(map[error]struct{})
+
 var (
 	ErrSuccess      = newError("success")
 	ErrBadRequest   = newError("bad request")
@@ -11,5 +13,13 @@ var (
 )
 
 func newError(msg string) error {
-	return errors.New(msg)
+	err := errors.New(msg)
+	errorList[err] = struct{}{}
+	return err
+}
+
+func IsCommonError(err error) bool {
+	_, ok := errorList[err]
+
+	return ok
 }
