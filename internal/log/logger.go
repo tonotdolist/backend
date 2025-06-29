@@ -3,6 +3,7 @@ package log
 import (
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
+	"gorm.io/gorm/logger"
 	"os"
 	"tonotdolist/pkg/config"
 	"tonotdolist/pkg/log"
@@ -21,6 +22,6 @@ func NewLogger() zerolog.Logger {
 	return zerolog.New(os.Stdout).Level(zerolog.DebugLevel).With().Timestamp().Logger()
 }
 
-func NewGormLogger(logger zerolog.Logger, viper *viper.Viper) *log.GormLogger {
+func NewGormLogger(logger zerolog.Logger, viper *viper.Viper) logger.Interface {
 	return log.NewGormLogger(logger, viper.GetBool(ignoreRecordNotFoundErrKey), viper.GetInt64(slowThresholdKey))
 }

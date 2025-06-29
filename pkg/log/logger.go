@@ -23,7 +23,7 @@ func GetLoggerFromContext(ctx context.Context) zerolog.Logger {
 	return logger1
 }
 
-func NewGormLogger(logger zerolog.Logger, ignoreNotFoundErr bool, slowThreshold int64) *GormLogger {
+func NewGormLogger(logger zerolog.Logger, ignoreNotFoundErr bool, slowThreshold int64) logger.Interface {
 	return &GormLogger{
 		logger:            logger,
 		ignoreNotFoundErr: ignoreNotFoundErr,
