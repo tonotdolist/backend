@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"reflect"
+	"tonotdolist/common"
 )
 
 var requestToInternal = make(map[uint]map[reflect.Type]reflect.Type)
@@ -44,7 +45,7 @@ func BindJSON(ctx *gin.Context, version uint, internalType reflect.Type) (interf
 	}
 
 	if err := ctx.ShouldBindJSON(value); err != nil {
-		return nil, fmt.Errorf("unable to bind JSON to %T: %w", value, err)
+		return nil, common.ErrBadRequest
 	}
 
 	return versionedRequest.ToInternalRequest(), nil
