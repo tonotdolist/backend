@@ -77,7 +77,7 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	err = h.userService.Register(ctx, req)
 
 	if err != nil {
-		if !errors.Is(err, common.ErrUnauthorized) {
+		if !common.IsCommonError(err) {
 			logger.Error().Err(err).Msg("error handling register request")
 		}
 	}
