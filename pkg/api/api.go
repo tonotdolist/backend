@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	"tonotdolist/common"
 )
 
 type RequestResponder struct {
@@ -34,6 +35,10 @@ func NewRequestResponder(logger zerolog.Logger) *RequestResponder {
 func (rr *RequestResponder) HandleResponse(version uint, ctx *gin.Context, err error, data interface{}) {
 	if data == nil {
 		data = map[string]string{}
+	}
+
+	if err == nil {
+		err = common.ErrSuccess
 	}
 
 	apiHandler, ok := getApiVersion(version)
