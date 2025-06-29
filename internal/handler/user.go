@@ -47,7 +47,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	err = h.userService.Login(ctx, req)
 
 	if err != nil {
-		if !errors.Is(err, common.ErrUnauthorized) {
+		if !common.IsCommonError(err) {
 			logger.Error().Err(err).Msg("error handling login request")
 		}
 	}
