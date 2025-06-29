@@ -23,7 +23,7 @@ func ValidateRequiredKeys(logger zerolog.Logger, v *viper.Viper) {
 
 func NewConfig(logger zerolog.Logger, path string) *viper.Viper {
 	conf := viper.New()
-	conf.SetConfigName(path)
+	conf.SetConfigFile(path)
 
 	err := conf.ReadInConfig()
 
