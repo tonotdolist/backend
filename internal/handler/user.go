@@ -33,7 +33,9 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 
 	rawReq, err := api.BindJSON(ctx, version, loginRequestType)
 
-	defer h.responder.HandleResponse(version, ctx, err, nil)
+	defer func() {
+		h.responder.HandleResponse(version, ctx, err, nil)
+	}()
 
 	if err != nil {
 		if !errors.Is(err, common.ErrBadRequest) {
@@ -59,7 +61,9 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 
 	rawReq, err := api.BindJSON(ctx, version, registerRequestType)
 
-	defer h.responder.HandleResponse(version, ctx, err, nil)
+	defer func() {
+		h.responder.HandleResponse(version, ctx, err, nil)
+	}()
 
 	if err != nil {
 		if !errors.Is(err, common.ErrBadRequest) {
