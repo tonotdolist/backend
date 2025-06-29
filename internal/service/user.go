@@ -2,10 +2,8 @@ package service
 
 import (
 	"context"
-	"errors"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 	"tonotdolist/common"
 	"tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
@@ -66,10 +64,6 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 
 	err = s.userRepository.Create(ctx, user)
 	if err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
-			return common.ErrConflict
-		}
-
 		return err
 	}
 

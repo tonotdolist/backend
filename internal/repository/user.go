@@ -41,7 +41,14 @@ func (up *userRepository) GetByEmail(ctx context.Context, email string) (*model.
 }
 
 func (up *userRepository) Create(ctx context.Context, user *model.User) error {
-	return up.db.WithContext(context.WithoutCancel(ctx)).Create(user).Error
+	err := up.db.WithContext(context.WithoutCancel(ctx)).Create(user).Error
+	if err != nil {
+		if errors.Is(err, gorm.ErrDuplicatedKey) {
+			return common.ErrConflict
+		}
+	}
+
+	return nil
 }
 
 func (up *userRepository) Update(ctx context.Context, user *model.User) error {
