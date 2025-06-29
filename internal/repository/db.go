@@ -6,8 +6,8 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"strings"
+	"tonotdolist/internal/log"
 	"tonotdolist/pkg/config"
 )
 
@@ -20,7 +20,7 @@ func init() {
 	config.RegisterRequiredKey(DsnKey, DBDialector)
 }
 
-func NewDB(logger zerolog.Logger, gormLogger logger.Interface, config *viper.Viper) *gorm.DB {
+func NewDB(logger zerolog.Logger, config *viper.Viper) *gorm.DB {
 	dsn := config.GetString(DsnKey)
 	dialectorType := config.GetString(DBDialector)
 
@@ -44,7 +44,7 @@ func NewDB(logger zerolog.Logger, gormLogger logger.Interface, config *viper.Vip
 	}
 
 	db, err := gorm.Open(dialector, &gorm.Config{
-		Logger: gormLogger,
+		Logger: log.NewGormLogger(logger, config),
 	})
 
 	if err != nil {

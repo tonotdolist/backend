@@ -9,7 +9,6 @@ import (
 	"github.com/spf13/viper"
 	"tonotdolist/internal/app"
 	"tonotdolist/internal/handler"
-	"tonotdolist/internal/log"
 	"tonotdolist/internal/repository"
 	"tonotdolist/internal/server"
 	"tonotdolist/internal/service"
@@ -34,7 +33,6 @@ var handlerSet = wire.NewSet(
 
 func InitializeApp(logger zerolog.Logger, conf *viper.Viper) *app.App {
 	panic(wire.Build(
-		log.NewGormLogger,
 		repositorySet,
 		serviceSet,
 		handlerSet,
