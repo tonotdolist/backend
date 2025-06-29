@@ -6,6 +6,6 @@ import (
 )
 
 type UserService interface {
-	Login(context.Context, common.UserLoginRequest) error
-	Register(context.Context, common.UserRegisterRequest) error
+	Login(context.Context, *common.UserLoginRequest) error
+	Register(context.Context, *common.UserRegisterRequest) error
 }
