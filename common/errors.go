@@ -7,6 +7,7 @@ var (
 	ErrBadRequest    = newError("bad request")
 	ErrUnauthorized  = newError("unauthorized")
 	ErrNotFound      = newError("content not found")
+	ErrConflict      = newError("conflict")
 	ErrInternalError = newError("internal server error")
 )
 

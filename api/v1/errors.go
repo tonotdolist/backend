@@ -9,10 +9,9 @@ func init() {
 	registerError(200, 200, "Ok", common.ErrSuccess)
 	registerError(400, 400, "Bad Request", common.ErrBadRequest)
 	registerError(401, 40, "Unauthorized", common.ErrUnauthorized)
+	registerError(409, 409, "Conflict", common.ErrConflict)
 	registerError(404, 404, "Not Found", common.ErrNotFound)
 }
-
-var internalServerErr = newError(500, 500, "Internal Error")
 
 type Error struct {
 	HTTPCode int
