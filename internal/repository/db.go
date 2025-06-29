@@ -3,26 +3,50 @@ package repository
 import (
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
+	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"strings"
 	"tonotdolist/pkg/config"
 )
 
 const (
-	DsnKey = "db.dsn"
+	DsnKey      = "db.dsn"
+	DBDialector = "db.dialector"
 )
 
 func init() {
-	config.RegisterRequiredKey(DsnKey)
+	config.RegisterRequiredKey(DsnKey, DBDialector)
 }
 
 func NewDB(logger zerolog.Logger, gormLogger logger.Interface, config *viper.Viper) *gorm.DB {
 	dsn := config.GetString(DsnKey)
+	dialectorType := config.GetString(DBDialector)
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
+	var (
+		dialector gorm.Dialector
+	)
+
+	switch strings.ToLower(dialectorType) {
+	case "mysql":
+		{
+			dialector = mysql.Open(dsn)
+		}
+	case "postgres":
+		{
+			dialector = postgres.Open(dsn)
+		}
+	default:
+		{
+			logger.Fatal().Str("dialector", dialectorType).Msg("unable to find dialector")
+		}
+	}
+
+	db, err := gorm.Open(dialector, &gorm.Config{
 		Logger: gormLogger,
 	})
+
 	if err != nil {
 		logger.Fatal().Err(err).Msg("unable to connect to db")
 	}
