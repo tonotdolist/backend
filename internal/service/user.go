@@ -34,17 +34,12 @@ func NewUserService(userRepository repository.UserRepository, viper *viper.Viper
 }
 
 func (s *userService) Login(ctx context.Context, req *common.UserLoginRequest) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 15)
-	if err != nil {
-		return err
-	}
-
 	user, err := s.userRepository.GetByEmail(ctx, req.Email)
 	if err != nil {
 		return err
 	}
 
-	if user.Password != string(hashedPassword) {
+	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)) != nil {
 		return common.ErrUnauthorized
 	}
 
