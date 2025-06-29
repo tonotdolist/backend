@@ -1,6 +1,13 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+	"tonotdolist/pkg/migrate"
+)
+
+func init() {
+	migrate.RegisterMigrationModel(&User{})
+}
 
 type User struct {
 	gorm.Model
