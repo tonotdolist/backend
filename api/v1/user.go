@@ -20,14 +20,14 @@ type UserLoginRequest struct {
 	Password string `json:"password" binding:"required,min=8,max=72"`
 }
 
-func (r *UserLoginRequest) ToInternalRequest() *common.UserLoginRequest {
+func (r *UserLoginRequest) ToInternalRequest() interface{} {
 	return &common.UserLoginRequest{
 		Email:    r.Email,
 		Password: r.Password,
 	}
 }
 
-func (r *UserRegisterRequest) ToInternalRequest() *common.UserRegisterRequest {
+func (r *UserRegisterRequest) ToInternalRequest() interface{} {
 	return &common.UserRegisterRequest{
 		Email:    r.Email,
 		Password: r.Password,
