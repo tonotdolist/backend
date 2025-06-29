@@ -12,7 +12,7 @@ import (
 	"tonotdolist/pkg/config"
 )
 
-const bcryptCostKey = "auth.bcryptcost"
+const bcryptCostKey = "auth.bcryptCost"
 
 func init() {
 	config.RegisterRequiredKey(bcryptCostKey)
