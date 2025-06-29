@@ -17,17 +17,10 @@ type GormLogger struct {
 	slowThreshold     int64
 }
 
-func GetLoggerFromContext(ctx context.Context) (zerolog.Logger, error) {
+func GetLoggerFromContext(ctx context.Context) zerolog.Logger {
 	rawLogger := ctx.Value("logger")
-	if rawLogger == nil {
-		return zerolog.Nop(), errors.New("logger not found in context")
-	}
-	logger1, ok := rawLogger.(zerolog.Logger)
-	if !ok {
-		return zerolog.Nop(), errors.New("cannot cast object in context to logger")
-	}
-
-	return logger1, nil
+	logger1 := rawLogger.(zerolog.Logger)
+	return logger1
 }
 
 func NewGormLogger(logger zerolog.Logger, ignoreNotFoundErr bool, slowThreshold int64) *GormLogger {
