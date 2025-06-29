@@ -33,3 +33,6 @@ func (r *UserRegisterRequest) ToInternalRequest() interface{} {
 		Password: r.Password,
 	}
 }
+
+var _ api.VersionedRequest = (*UserLoginRequest)(nil)
+var _ api.VersionedRequest = (*UserRegisterRequest)(nil)
