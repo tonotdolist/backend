@@ -13,6 +13,8 @@ func init() {
 	registerError(404, 404, "Not Found", common.ErrNotFound)
 }
 
+var internalServerErr = newError(500, 500, "Internal Server Error")
+
 type Error struct {
 	HTTPCode int
 	Code     int
