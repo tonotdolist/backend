@@ -3,6 +3,8 @@ package app
 import (
 	"context"
 	"tonotdolist/pkg/server/http"
+
+	_ "tonotdolist/api/v1"
 )
 
 type App struct {
