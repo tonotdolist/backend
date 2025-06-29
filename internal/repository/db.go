@@ -5,8 +5,8 @@ import (
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"tonotdolist/pkg/config"
-	"tonotdolist/pkg/log"
 )
 
 const (
@@ -17,11 +17,11 @@ func init() {
 	config.RegisterRequiredKey(DsnKey)
 }
 
-func NewDB(logger zerolog.Logger, gormLogger log.GormLogger, config *viper.Viper) *gorm.DB {
+func NewDB(logger zerolog.Logger, gormLogger logger.Interface, config *viper.Viper) *gorm.DB {
 	dsn := config.GetString(DsnKey)
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
-		Logger: &gormLogger,
+		Logger: gormLogger,
 	})
 	if err != nil {
 		logger.Fatal().Err(err).Msg("unable to connect to db")
