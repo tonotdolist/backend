@@ -14,7 +14,7 @@ import (
 
 func main() {
 	logger := log.NewLogger()
-	conf := config.NewConfig(logger, "local.yaml")
+	conf := config.NewConfig(logger, "config/local.yaml")
 	if conf.GetBool("prod") {
 		logger = logger.Level(zerolog.WarnLevel)
 	}
