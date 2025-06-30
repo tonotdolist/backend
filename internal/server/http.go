@@ -20,9 +20,9 @@ func init() {
 }
 
 func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, userHandler *handler.UserHandler) *http.Server {
-	s := http.NewServer(gin.Default(), logger, http.WithHost(viper.GetString(HTTPHostKey)), http.WithPort(viper.GetUint16(HTTPPortKey)))
+	s := http.NewServer(gin.New(), logger, http.WithHost(viper.GetString(HTTPHostKey)), http.WithPort(viper.GetUint16(HTTPPortKey)))
 
-	s.Use(middleware.RequestLogMiddleware(logger)).Use(middleware.VersionMiddleware())
+	s.Use(middleware.RequestLogMiddleware(logger)).Use(middleware.VersionMiddleware()).Use(gin.Recovery())
 
 	v1 := s.Group("/v1")
 	{
