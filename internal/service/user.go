@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 	"tonotdolist/common"
@@ -52,7 +53,13 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 		return err
 	}
 
+	id, err := uuid.NewRandom()
+	if err != nil {
+		return err
+	}
+
 	user := &model.User{
+		UserId:   id.String(),
 		Email:    req.Email,
 		Password: string(hashedPassword),
 	}
