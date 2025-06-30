@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"tonotdolist/common"
 	"tonotdolist/internal/model"
+	"tonotdolist/pkg/db"
 )
 
 type UserRepository interface {
@@ -43,7 +44,7 @@ func (up *userRepository) GetByEmail(ctx context.Context, email string) (*model.
 func (up *userRepository) Create(ctx context.Context, user *model.User) error {
 	err := up.db.WithContext(context.WithoutCancel(ctx)).Create(user).Error
 	if err != nil {
-		if errors.Is(err, gorm.ErrDuplicatedKey) {
+		if db.IsError(err, db.ErrUniqueValueViolation) {
 			return common.ErrConflict
 		}
 	}
