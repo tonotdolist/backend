@@ -11,16 +11,16 @@ import (
 )
 
 const (
-	HTTPHostKey = "server.http.host"
-	HTTPPortKey = "server.http.port"
+	httpHostKey = "server.http.host"
+	httpPortKey = "server.http.port"
 )
 
 func init() {
-	config.RegisterRequiredKey(HTTPHostKey, HTTPPortKey)
+	config.RegisterRequiredKey(httpHostKey, httpPortKey)
 }
 
 func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, userHandler *handler.UserHandler) *http.Server {
-	s := http.NewServer(gin.New(), logger, http.WithHost(viper.GetString(HTTPHostKey)), http.WithPort(viper.GetUint16(HTTPPortKey)))
+	s := http.NewServer(gin.New(), logger, http.WithHost(viper.GetString(httpHostKey)), http.WithPort(viper.GetUint16(httpPortKey)))
 
 	s.Use(middleware.RequestLogMiddleware(logger)).Use(middleware.VersionMiddleware()).Use(gin.Recovery())
 
