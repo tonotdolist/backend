@@ -13,16 +13,16 @@ import (
 
 const (
 	dsnKey      = "db.dsn"
-	dBDialector = "db.dialector"
+	dbDialector = "db.dialector"
 )
 
 func init() {
-	config.RegisterRequiredKey(dsnKey, dBDialector)
+	config.RegisterRequiredKey(dsnKey, dbDialector)
 }
 
 func NewDB(logger zerolog.Logger, config *viper.Viper) *gorm.DB {
 	dsn := config.GetString(dsnKey)
-	dialectorType := config.GetString(dBDialector)
+	dialectorType := config.GetString(dbDialector)
 
 	var (
 		dialector gorm.Dialector
