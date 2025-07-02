@@ -9,6 +9,7 @@ import (
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"strings"
+	"time"
 	"tonotdolist/internal/log"
 	"tonotdolist/pkg/config"
 )
@@ -24,7 +25,7 @@ func init() {
 	config.RegisterRequiredKey(dsnKey, dbDialector, redisAddrKey)
 }
 
-func NewDB(logger zerolog.Logger, config *viper.Viper) *gorm.DB {
+func NewDB(ctx context.Context, logger zerolog.Logger, config *viper.Viper) *gorm.DB {
 	dsn := config.GetString(dsnKey)
 	dialectorType := config.GetString(dbDialector)
 
@@ -60,7 +61,10 @@ func NewDB(logger zerolog.Logger, config *viper.Viper) *gorm.DB {
 		logger.Fatal().Err(err).Msg("unable to get sql.DB")
 	}
 
-	if err := sqlDB.Ping(); err != nil {
+	withCancel, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	if err := sqlDB.PingContext(withCancel); err != nil {
 		logger.Fatal().Err(err).Msg("unable to ping db")
 	}
 
@@ -72,7 +76,10 @@ func NewRedis(ctx context.Context, logger zerolog.Logger, config *viper.Viper) *
 		Addr: config.GetString(redisAddrKey),
 	})
 
-	if err := rdb.Ping(ctx).Err(); err != nil {
+	withCancel, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+
+	if err := rdb.Ping(withCancel).Err(); err != nil {
 		logger.Fatal().Err(err).Msg("failed to ping redis")
 		return nil
 	}
