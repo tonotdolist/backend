@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"context"
+	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -14,10 +16,12 @@ import (
 const (
 	dsnKey      = "db.dsn"
 	dbDialector = "db.dialector"
+
+	redisAddrKey = "cache.redis.addr"
 )
 
 func init() {
-	config.RegisterRequiredKey(dsnKey, dbDialector)
+	config.RegisterRequiredKey(dsnKey, dbDialector, redisAddrKey)
 }
 
 func NewDB(logger zerolog.Logger, config *viper.Viper) *gorm.DB {
@@ -61,4 +65,17 @@ func NewDB(logger zerolog.Logger, config *viper.Viper) *gorm.DB {
 	}
 
 	return db
+}
+
+func NewRedis(ctx context.Context, logger zerolog.Logger, config *viper.Viper) *redis.Client {
+	rdb := redis.NewClient(&redis.Options{
+		Addr: config.GetString(redisAddrKey),
+	})
+
+	if err := rdb.Ping(ctx).Err(); err != nil {
+		logger.Fatal().Err(err).Msg("failed to ping redis")
+		return nil
+	}
+
+	return rdb
 }
