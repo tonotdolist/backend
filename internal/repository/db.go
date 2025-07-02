@@ -29,9 +29,7 @@ func NewDB(ctx context.Context, logger zerolog.Logger, config *viper.Viper) *gor
 	dsn := config.GetString(dsnKey)
 	dialectorType := config.GetString(dbDialector)
 
-	var (
-		dialector gorm.Dialector
-	)
+	var dialector gorm.Dialector
 
 	switch strings.ToLower(dialectorType) {
 	case "mysql":
