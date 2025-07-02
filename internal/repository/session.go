@@ -4,7 +4,7 @@ import "context"
 
 type SessionRepository interface {
 	AddSession(ctx context.Context, userId string) (string, error)
-	GetSession(ctx context.Context, sessionId string)
-	DeleteSession(ctx context.Context, sessionId string)
-	DeleteAllUserSession(ctx context.Context, userId string)
+	GetSession(ctx context.Context, sessionId string) error
+	DeleteSession(ctx context.Context, sessionId string) error
+	DeleteAllUserSession(ctx context.Context, userId string) error
 }
