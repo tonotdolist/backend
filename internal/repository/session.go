@@ -28,3 +28,5 @@ func (r *sessionRepository) DeleteSession(ctx context.Context, sessionId string)
 func (r *sessionRepository) DeleteAllUserSession(ctx context.Context, userId string) error {
 	panic("implement me")
 }
+
+var _ SessionRepository = (*sessionRepository)(nil)
