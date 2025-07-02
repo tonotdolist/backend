@@ -19,14 +19,16 @@ func main() {
 		logger = logger.Level(zerolog.WarnLevel)
 	}
 
-	app := wire.InitializeApp(logger, conf)
+	ctx := context.Background()
+
+	app := wire.InitializeApp(ctx, logger, conf)
 	app.Start()
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	stopCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-	app.Stop(ctx)
+	app.Stop(stopCtx)
 }

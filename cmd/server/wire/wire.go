@@ -4,6 +4,7 @@
 package wire
 
 import (
+	"context"
 	"github.com/google/wire"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
@@ -17,6 +18,7 @@ import (
 
 var repositorySet = wire.NewSet(
 	repository.NewDB,
+	repository.NewRedis,
 	repository.NewRepository,
 	repository.NewUserRepository,
 )
@@ -31,7 +33,7 @@ var handlerSet = wire.NewSet(
 	handler.NewUserHandler,
 )
 
-func InitializeApp(logger zerolog.Logger, conf *viper.Viper) *app.App {
+func InitializeApp(ctx context.Context, logger zerolog.Logger, conf *viper.Viper) *app.App {
 	panic(wire.Build(
 		repositorySet,
 		serviceSet,
