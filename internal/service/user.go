@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
@@ -23,6 +24,7 @@ func init() {
 }
 
 type UserService interface {
+	GetSession(ctx context.Context, sessionId string) (string, error)
 	Login(context.Context, *common.UserLoginRequest) (string, error)
 	Register(context.Context, *common.UserRegisterRequest) (string, error)
 }
@@ -43,10 +45,27 @@ func NewUserService(userRepository repository.UserRepository, sessionRepository 
 	}
 }
 
+func (s *userService) GetSession(ctx context.Context, sessionId string) (string, error) {
+	session, err := s.sessionRepository.GetSession(ctx, sessionId)
+	if err != nil {
+		if !errors.Is(err, common.ErrUnauthorized) {
+			return "", fmt.Errorf("error fetching user session info from repo: %w", err)
+		}
+
+		return "", err
+	}
+
+	if time.Now().After(time.Unix(session.Expire, 0)) {
+		return "", common.ErrUnauthorized
+	}
+
+	return session.UserID, nil
+}
+
 func (s *userService) Login(ctx context.Context, req *common.UserLoginRequest) (string, error) {
 	user, err := s.userRepository.GetByEmail(ctx, req.Email)
 	if err != nil {
-		return "", fmt.Errorf("error fetching user data from db: %w", err)
+		return "", fmt.Errorf("error fetching user data from repo: %w", err)
 	}
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)) != nil {
