@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"tonotdolist/internal/log"
 	_ "tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
@@ -11,7 +12,8 @@ import (
 func main() {
 	logger := log.NewLogger()
 	conf := config.NewConfig(logger, "config/local.yaml")
-	db := repository.NewDB(logger, conf)
+	ctx := context.Background()
+	db := repository.NewDB(ctx, logger, conf)
 
 	err := migrate.Migrate(db)
 
