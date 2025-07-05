@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func RequestLogMiddleware(logger zerolog.Logger) gin.HandlerFunc {
+func LogMiddleware(logger zerolog.Logger) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		startTime := time.Now()
 		logger = logger.With().
