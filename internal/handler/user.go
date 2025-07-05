@@ -88,6 +88,8 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 		if !common.IsCommonError(err) {
 			logger.Error().Err(err).Msg("error handling register request")
 		}
+
+		return
 	}
 
 	resp = &common.UserRegisterResponse{
