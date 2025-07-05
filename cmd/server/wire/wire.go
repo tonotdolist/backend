@@ -13,7 +13,6 @@ import (
 	"tonotdolist/internal/repository"
 	"tonotdolist/internal/server"
 	"tonotdolist/internal/service"
-	"tonotdolist/pkg/api"
 )
 
 var repositorySet = wire.NewSet(
@@ -29,7 +28,6 @@ var serviceSet = wire.NewSet(
 )
 
 var handlerSet = wire.NewSet(
-	api.NewRequestResponder,
 	handler.NewHandler,
 	handler.NewUserHandler,
 )

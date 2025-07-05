@@ -2,17 +2,14 @@ package handler
 
 import (
 	"github.com/rs/zerolog"
-	"tonotdolist/pkg/api"
 )
 
 type Handler struct {
-	logger    zerolog.Logger
-	responder *api.RequestResponder
+	logger zerolog.Logger
 }
 
-func NewHandler(logger zerolog.Logger, responder *api.RequestResponder) *Handler {
+func NewHandler(logger zerolog.Logger) *Handler {
 	return &Handler{
-		logger:    logger,
-		responder: responder,
+		logger: logger,
 	}
 }
