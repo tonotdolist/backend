@@ -1,5 +1,7 @@
 package api
 
+import errors2 "errors"
+
 var errors = make(map[uint]map[error]interface{})
 
 func RegisterError(apiVersion uint, target interface{}, mapping error) {
@@ -16,8 +18,10 @@ func RegisterError(apiVersion uint, target interface{}, mapping error) {
 func GetError(version ApiVersionHandler, mapping error) interface{} {
 	apiVersion := version.GetApiVersion()
 
+	unwrappedErr := errors2.Unwrap(mapping)
+
 	if versionMapping, ok := errors[apiVersion]; ok {
-		if err, ok := versionMapping[mapping]; ok {
+		if err, ok := versionMapping[unwrappedErr]; ok {
 			return err
 		}
 	}
