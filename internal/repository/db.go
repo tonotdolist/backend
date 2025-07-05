@@ -18,7 +18,9 @@ const (
 	dsnKey      = "db.dsn"
 	dbDialector = "db.dialector"
 
-	redisAddrKey = "cache.redis.addr"
+	redisAddrKey     = "cache.redis.addr"
+	redisUsernameKey = "cache.redis.username"
+	redisPasswordKey = "cache.redis.password"
 )
 
 func init() {
@@ -70,9 +72,22 @@ func NewDB(ctx context.Context, logger zerolog.Logger, config *viper.Viper) *gor
 }
 
 func NewRedis(ctx context.Context, logger zerolog.Logger, config *viper.Viper) *redis.Client {
-	rdb := redis.NewClient(&redis.Options{
+	opt := &redis.Options{
 		Addr: config.GetString(redisAddrKey),
-	})
+	}
+
+	user := config.GetString(redisUsernameKey)
+	pwd := config.GetString(redisPasswordKey)
+
+	if user != "" {
+		opt.Username = user
+	}
+
+	if pwd != "" {
+		opt.Password = pwd
+	}
+
+	rdb := redis.NewClient(opt)
 
 	withCancel, cancel := context.WithTimeout(ctx, 3*time.Second)
 	defer cancel()
