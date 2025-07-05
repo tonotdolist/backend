@@ -26,6 +26,12 @@ type sessionRepository struct {
 	*Repository
 }
 
+func NewSessionRepository(repository *Repository) SessionRepository {
+	return &sessionRepository{
+		Repository: repository,
+	}
+}
+
 func (r *sessionRepository) AddSession(ctx context.Context, userId string, sessionId string, ttl int64) error {
 	session := &sessionContent{
 		userId: userId,
