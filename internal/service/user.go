@@ -20,7 +20,7 @@ const (
 )
 
 func init() {
-	config.RegisterRequiredKey(bcryptCostKey)
+	config.RegisterRequiredKey(bcryptCostKey, sessionLengthKey)
 }
 
 type UserService interface {
