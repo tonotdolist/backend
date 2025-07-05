@@ -1,16 +1,8 @@
 package api
 
-import (
-	"github.com/rs/zerolog"
-)
-
 const (
 	ApiVersionContextKey = "version"
 )
-
-type RequestResponder struct {
-	logger zerolog.Logger
-}
 
 type ApiVersionHandler interface {
 	GetApiVersion() uint
@@ -28,8 +20,4 @@ func GetApiVersion(version uint) (ApiVersionHandler, bool) {
 	v, ok := versions[version]
 
 	return v, ok
-}
-
-func NewRequestResponder(logger zerolog.Logger) *RequestResponder {
-	return &RequestResponder{logger: logger}
 }
