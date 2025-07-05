@@ -3,7 +3,7 @@ package repository
 import "context"
 
 type SessionRepository interface {
-	AddSession(ctx context.Context, userId string) (string, error)
+	AddSession(ctx context.Context, userId string, sessionId string) error
 	GetSession(ctx context.Context, sessionId string) (string, error)
 	DeleteSession(ctx context.Context, sessionId string) error
 	DeleteAllUserSession(ctx context.Context, userId string) error
@@ -13,7 +13,7 @@ type sessionRepository struct {
 	*Repository
 }
 
-func (r *sessionRepository) AddSession(ctx context.Context, userId string) (string, error) {
+func (r *sessionRepository) AddSession(ctx context.Context, userId string, sessionId string) error {
 	panic("implement me")
 }
 
