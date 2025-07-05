@@ -26,7 +26,7 @@ func HandleResponse(ctx *gin.Context, err error, data interface{}) {
 		return
 	}
 
-	httpCode, resp := apiHandler.HandleResponse(err, data)
+	httpCode, resp := apiHandler.HandleResponse(api.GetError(apiHandler, err), data)
 
 	ctx.JSON(httpCode, resp)
 }
