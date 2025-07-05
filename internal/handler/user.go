@@ -28,13 +28,14 @@ func NewUserHandler(handler *Handler, userService service.UserService) *UserHand
 }
 
 func (h *UserHandler) Login(ctx *gin.Context) {
+	var resp *common.UserLoginResponse
 	logger := log.GetLoggerFromContext(ctx)
 	version := ctx.GetUint("version")
 
 	rawReq, err := api.BindJSON(ctx, version, loginRequestType)
 
 	defer func() {
-		h.responder.HandleResponse(version, ctx, err, nil)
+		h.responder.HandleResponse(version, ctx, err, resp)
 	}()
 
 	if err != nil {
@@ -46,23 +47,31 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	}
 
 	req := rawReq.(*common.UserLoginRequest)
-	err = h.userService.Login(ctx, req)
+	sessionId, err := h.userService.Login(ctx, req)
 
 	if err != nil {
 		if !common.IsCommonError(err) {
 			logger.Error().Err(err).Msg("error handling login request")
 		}
+
+		return
+	}
+
+	resp = &common.UserLoginResponse{
+		SessionID: sessionId,
 	}
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
+	var resp *common.UserRegisterResponse
+
 	logger := log.GetLoggerFromContext(ctx)
 	version := ctx.GetUint("version")
 
 	rawReq, err := api.BindJSON(ctx, version, registerRequestType)
 
 	defer func() {
-		h.responder.HandleResponse(version, ctx, err, nil)
+		h.responder.HandleResponse(version, ctx, err, resp)
 	}()
 
 	if err != nil {
@@ -74,11 +83,15 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	}
 
 	req := rawReq.(*common.UserRegisterRequest)
-	err = h.userService.Register(ctx, req)
+	sessionId, err := h.userService.Register(ctx, req)
 
 	if err != nil {
 		if !common.IsCommonError(err) {
 			logger.Error().Err(err).Msg("error handling register request")
 		}
+	}
+
+	resp = &common.UserRegisterResponse{
+		SessionID: sessionId,
 	}
 }
