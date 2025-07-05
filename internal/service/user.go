@@ -18,8 +18,8 @@ func init() {
 }
 
 type UserService interface {
-	Login(context.Context, *common.UserLoginRequest) error
-	Register(context.Context, *common.UserRegisterRequest) error
+	Login(context.Context, *common.UserLoginRequest) (error, string)
+	Register(context.Context, *common.UserRegisterRequest) (error, string)
 }
 
 type userService struct {
@@ -34,28 +34,28 @@ func NewUserService(userRepository repository.UserRepository, viper *viper.Viper
 	}
 }
 
-func (s *userService) Login(ctx context.Context, req *common.UserLoginRequest) error {
+func (s *userService) Login(ctx context.Context, req *common.UserLoginRequest) (error, string) {
 	user, err := s.userRepository.GetByEmail(ctx, req.Email)
 	if err != nil {
-		return err
+		return err, ""
 	}
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)) != nil {
-		return common.ErrUnauthorized
+		return common.ErrUnauthorized, ""
 	}
 
-	return nil
+	return nil, ""
 }
 
-func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequest) error {
+func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequest) (error, string) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 15)
 	if err != nil {
-		return err
+		return err, ""
 	}
 
 	id, err := uuid.NewRandom()
 	if err != nil {
-		return err
+		return err, ""
 	}
 
 	user := &model.User{
@@ -66,8 +66,8 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 
 	err = s.userRepository.Create(ctx, user)
 	if err != nil {
-		return err
+		return err, ""
 	}
 
-	return nil
+	return nil, ""
 }
