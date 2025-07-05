@@ -21,6 +21,7 @@ var repositorySet = wire.NewSet(
 	repository.NewRedis,
 	repository.NewRepository,
 	repository.NewUserRepository,
+	repository.NewSessionRepository,
 )
 
 var serviceSet = wire.NewSet(
