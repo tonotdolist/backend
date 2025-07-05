@@ -2,9 +2,11 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
+	"time"
 	"tonotdolist/common"
 	"tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
@@ -21,8 +23,8 @@ func init() {
 }
 
 type UserService interface {
-	Login(context.Context, *common.UserLoginRequest) (error, string)
-	Register(context.Context, *common.UserRegisterRequest) (error, string)
+	Login(context.Context, *common.UserLoginRequest) (string, error)
+	Register(context.Context, *common.UserRegisterRequest) (string, error)
 }
 
 type userService struct {
@@ -41,28 +43,33 @@ func NewUserService(userRepository repository.UserRepository, sessionRepository 
 	}
 }
 
-func (s *userService) Login(ctx context.Context, req *common.UserLoginRequest) (error, string) {
+func (s *userService) Login(ctx context.Context, req *common.UserLoginRequest) (string, error) {
 	user, err := s.userRepository.GetByEmail(ctx, req.Email)
 	if err != nil {
-		return err, ""
+		return "", fmt.Errorf("error fetching user data from db: %w", err)
 	}
 
 	if bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)) != nil {
-		return common.ErrUnauthorized, ""
+		return "", common.ErrUnauthorized
 	}
 
-	return nil, ""
+	sessionId, err := s.createSession(ctx, user.UserId)
+	if err != nil {
+		return "", fmt.Errorf("error create session: %w", err)
+	}
+
+	return sessionId, nil
 }
 
-func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequest) (error, string) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), 15)
+func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequest) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.bcryptCost)
 	if err != nil {
-		return err, ""
+		return "", err
 	}
 
 	id, err := uuid.NewRandom()
 	if err != nil {
-		return err, ""
+		return "", fmt.Errorf("error generating user id: %w", err)
 	}
 
 	user := &model.User{
@@ -73,8 +80,28 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 
 	err = s.userRepository.Create(ctx, user)
 	if err != nil {
-		return err, ""
+		return "", fmt.Errorf("error inserting user data into db: %w", err)
 	}
 
-	return nil, ""
+	sessionId, err := s.createSession(ctx, user.UserId)
+	if err != nil {
+		return "", fmt.Errorf("error create session: %w", err)
+	}
+
+	return sessionId, nil
+}
+
+func (s *userService) createSession(ctx context.Context, userId string) (string, error) {
+	uuid, err := uuid.NewUUID()
+	if err != nil {
+		return "", fmt.Errorf("error generating session id: %w", err)
+	}
+	sessionId := uuid.String()
+
+	err = s.sessionRepository.AddSession(ctx, userId, sessionId, time.Now().Unix()+s.sessionLength)
+	if err != nil {
+		return "", fmt.Errorf("error adding session id to repo: %w", err)
+	}
+
+	return sessionId, nil
 }
