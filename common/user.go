@@ -17,3 +17,8 @@ type UserRegisterResponse struct {
 type UserLoginResponse struct {
 	SessionID string
 }
+
+type UserSession struct {
+	UserID string
+	Expire int64
+}
