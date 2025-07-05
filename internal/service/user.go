@@ -11,7 +11,10 @@ import (
 	"tonotdolist/pkg/config"
 )
 
-const bcryptCostKey = "auth.bcryptCost"
+const (
+	bcryptCostKey    = "auth.bcryptCost"
+	sessionLengthKey = "auth.sessionLength"
+)
 
 func init() {
 	config.RegisterRequiredKey(bcryptCostKey)
@@ -23,14 +26,18 @@ type UserService interface {
 }
 
 type userService struct {
-	bcryptCost     int
-	userRepository repository.UserRepository
+	bcryptCost        int
+	sessionLength     int64
+	userRepository    repository.UserRepository
+	sessionRepository repository.SessionRepository
 }
 
-func NewUserService(userRepository repository.UserRepository, viper *viper.Viper) UserService {
+func NewUserService(userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper) UserService {
 	return &userService{
-		userRepository: userRepository,
-		bcryptCost:     viper.GetInt(bcryptCostKey),
+		userRepository:    userRepository,
+		sessionRepository: sessionRepository,
+		bcryptCost:        viper.GetInt(bcryptCostKey),
+		sessionLength:     viper.GetInt64(sessionLengthKey),
 	}
 }
 
