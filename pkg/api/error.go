@@ -13,7 +13,7 @@ func RegisterError(apiVersion uint, target interface{}, mapping error) {
 	errors[apiVersion][mapping] = target
 }
 
-func getError(version ApiVersionHandler, mapping error) interface{} {
+func GetError(version ApiVersionHandler, mapping error) interface{} {
 	apiVersion := version.GetApiVersion()
 
 	if versionMapping, ok := errors[apiVersion]; ok {

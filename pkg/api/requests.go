@@ -27,7 +27,8 @@ func RegisterRequest[TInternal any, TVersion any](apiVersion uint) {
 	requestToInternal[apiVersion][internalType] = versionedType
 }
 
-func BindJSON(ctx *gin.Context, version uint, internalType reflect.Type) (interface{}, error) {
+func BindJSON(ctx *gin.Context, internalType reflect.Type) (interface{}, error) {
+	version := ctx.GetUint(ApiVersionContextKey)
 	requestMapping, ok := requestToInternal[version]
 	if !ok {
 		return nil, fmt.Errorf("api version %d not registered on the versioned request to internal request mapping", version)

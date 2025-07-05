@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"reflect"
+	iapi "tonotdolist/api"
 	"tonotdolist/common"
 	"tonotdolist/internal/service"
 	"tonotdolist/pkg/api"
@@ -29,13 +30,12 @@ func NewUserHandler(handler *Handler, userService service.UserService) *UserHand
 
 func (h *UserHandler) Login(ctx *gin.Context) {
 	var resp *common.UserLoginResponse
-	logger := log.GetLoggerFromContext(ctx)
-	version := ctx.GetUint("version")
 
-	rawReq, err := api.BindJSON(ctx, version, loginRequestType)
+	logger := log.GetLoggerFromContext(ctx)
+	rawReq, err := api.BindJSON(ctx, loginRequestType)
 
 	defer func() {
-		h.responder.HandleResponse(version, ctx, err, resp)
+		iapi.HandleResponse(ctx, err, resp)
 	}()
 
 	if err != nil {
@@ -66,12 +66,11 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	var resp *common.UserRegisterResponse
 
 	logger := log.GetLoggerFromContext(ctx)
-	version := ctx.GetUint("version")
 
-	rawReq, err := api.BindJSON(ctx, version, registerRequestType)
+	rawReq, err := api.BindJSON(ctx, registerRequestType)
 
 	defer func() {
-		h.responder.HandleResponse(version, ctx, err, resp)
+		iapi.HandleResponse(ctx, err, resp)
 	}()
 
 	if err != nil {
