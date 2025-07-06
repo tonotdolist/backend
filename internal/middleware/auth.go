@@ -11,7 +11,7 @@ import (
 
 func AuthMiddleware(userService service.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		sessionId := ctx.GetHeader("Authentication")
+		sessionId := ctx.GetHeader("Authorization")
 		if sessionId == "" {
 			api.HandleResponse(ctx, common.ErrUnauthorized, nil)
 
