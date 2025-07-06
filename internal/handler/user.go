@@ -96,3 +96,11 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 		SessionID: sessionId,
 	}
 }
+
+func (h *UserHandler) Logout(ctx *gin.Context) {
+
+}
+
+func (h *UserHandler) LogoutAll(ctx *gin.Context) {
+
+}
