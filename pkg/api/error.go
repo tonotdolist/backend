@@ -19,6 +19,9 @@ func GetError(version ApiVersionHandler, mapping error) interface{} {
 	apiVersion := version.GetApiVersion()
 
 	unwrappedErr := errors2.Unwrap(mapping)
+	if unwrappedErr == nil {
+		unwrappedErr = mapping
+	}
 
 	if versionMapping, ok := errors[apiVersion]; ok {
 		if err, ok := versionMapping[unwrappedErr]; ok {
