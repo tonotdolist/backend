@@ -98,9 +98,26 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 }
 
 func (h *UserHandler) Logout(ctx *gin.Context) {
+	userId := getUserId(ctx)
+	sessionId := ctx.GetHeader("Authorization")
 
+	err := h.userService.Logout(ctx, sessionId, userId)
+	if err != nil {
+		logger := log.GetLoggerFromContext(ctx)
+		logger.Error().Err(err).Msg("error signing user out")
+	}
+
+	iapi.HandleResponse(ctx, err, nil)
 }
 
 func (h *UserHandler) LogoutAll(ctx *gin.Context) {
+	userId := getUserId(ctx)
 
+	err := h.userService.LogoutAll(ctx, userId)
+	if err != nil {
+		logger := log.GetLoggerFromContext(ctx)
+		logger.Error().Err(err).Msg("error signing user out")
+	}
+
+	iapi.HandleResponse(ctx, err, nil)
 }

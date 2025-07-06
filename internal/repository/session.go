@@ -49,7 +49,7 @@ func (r *sessionRepository) GetSession(ctx context.Context, sessionId string) (*
 
 	if err := res.Err(); err != nil {
 		if errors.Is(err, redis.Nil) {
-			return nil, common.ErrUnauthorized
+			return nil, common.ErrNotFound
 		}
 
 		return nil, fmt.Errorf("error fetching user session: %w", err)

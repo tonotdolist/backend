@@ -27,6 +27,8 @@ type UserService interface {
 	GetSession(ctx context.Context, sessionId string) (string, error)
 	Login(context.Context, *common.UserLoginRequest) (string, error)
 	Register(context.Context, *common.UserRegisterRequest) (string, error)
+	Logout(ctx context.Context, sessionId string, userId string) error
+	LogoutAll(ctx context.Context, userId string) error
 }
 
 type userService struct {
@@ -48,11 +50,11 @@ func NewUserService(userRepository repository.UserRepository, sessionRepository 
 func (s *userService) GetSession(ctx context.Context, sessionId string) (string, error) {
 	session, err := s.sessionRepository.GetSession(ctx, sessionId)
 	if err != nil {
-		if !errors.Is(err, common.ErrUnauthorized) {
-			return "", fmt.Errorf("error fetching user session info from repo: %w", err)
+		if errors.Is(err, common.ErrNotFound) {
+			return "", common.ErrUnauthorized
 		}
 
-		return "", err
+		return "", fmt.Errorf("error fetching user session info from repo: %w", err)
 	}
 
 	if time.Now().After(time.Unix(session.Expire, 0)) {
@@ -123,4 +125,20 @@ func (s *userService) createSession(ctx context.Context, userId string) (string,
 	}
 
 	return sessionId, nil
+}
+
+func (s *userService) Logout(ctx context.Context, sessionId string, userId string) error {
+	if err := s.sessionRepository.DeleteSession(ctx, sessionId, userId); err != nil {
+		return fmt.Errorf("error deleting session from repo: %w", err)
+	}
+
+	return nil
+}
+
+func (s *userService) LogoutAll(ctx context.Context, userId string) error {
+	if err := s.sessionRepository.DeleteAllUserSession(ctx, userId); err != nil {
+		return fmt.Errorf("error deleting all sessions from repo: %w", err)
+	}
+
+	return nil
 }
