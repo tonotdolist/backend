@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"tonotdolist/api"
 	"tonotdolist/common"
@@ -20,8 +21,11 @@ func AuthMiddleware(userService service.UserService) gin.HandlerFunc {
 
 		userId, err := userService.GetSession(ctx, sessionId)
 		if err != nil {
-			logger := log.GetLoggerFromContext(ctx)
-			logger.Error().Err(err).Msg("fail to validate session")
+			if !errors.Is(err, common.ErrUnauthorized) {
+				logger := log.GetLoggerFromContext(ctx)
+				logger.Error().Err(err).Msg("fail to validate session")
+			}
+
 			api.HandleResponse(ctx, err, nil)
 
 			ctx.Abort()
