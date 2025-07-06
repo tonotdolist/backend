@@ -20,6 +20,7 @@ func AuthMiddleware(userService service.UserService) gin.HandlerFunc {
 			api.HandleResponse(ctx, err, nil)
 		}
 
+		ctx.Set("session_id", sessionId)
 		ctx.Set("user_id", userId)
 	}
 }
