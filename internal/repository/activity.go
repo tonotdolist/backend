@@ -43,7 +43,7 @@ func (r *activityRepository) GetNUserActivity(ctx context.Context, userId string
 
 func (r *activityRepository) GetUserActivityInRange(ctx context.Context, userId string, start time.Time, end time.Time) ([]*model.Activity, error) {
 	var activities []*model.Activity
-	err := r.db.WithContext(ctx).Where("user_id = ? AND date BETWEEN ? AND ?", userId).Find(&activities).Error
+	err := r.db.WithContext(ctx).Where("user_id = ? AND date BETWEEN ? AND ?", userId, start, end).Find(&activities).Error
 
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
