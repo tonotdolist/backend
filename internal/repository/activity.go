@@ -13,8 +13,8 @@ import (
 type ActivityRepository interface {
 	GetNUserActivity(ctx context.Context, userId string, n int, offset int) ([]*model.Activity, error)
 	GetUserActivityInRange(ctx context.Context, userId string, start time.Time, end time.Time) ([]*model.Activity, error)
-	CreateActivity(ctx context.Context, userId string, activity *model.Activity) error
-	UpdateActivity(ctx context.Context, userId string, activity *model.Activity) error
+	CreateActivity(ctx context.Context, activity *model.Activity) error
+	UpdateActivity(ctx context.Context, activity *model.Activity) error
 }
 
 type activityRepository struct {
@@ -55,9 +55,7 @@ func (r *activityRepository) GetUserActivityInRange(ctx context.Context, userId 
 	return activities, nil
 }
 
-func (r *activityRepository) CreateActivity(ctx context.Context, userId string, activity *model.Activity) error {
-	activity.UserId = userId
-
+func (r *activityRepository) CreateActivity(ctx context.Context, activity *model.Activity) error {
 	err := r.db.WithContext(ctx).Create(&activity).Error
 	if err != nil {
 		return fmt.Errorf("error creating activity: %v", err)
@@ -66,9 +64,7 @@ func (r *activityRepository) CreateActivity(ctx context.Context, userId string, 
 	return nil
 }
 
-func (r *activityRepository) UpdateActivity(ctx context.Context, userId string, activity *model.Activity) error {
-	activity.UserId = userId
-
+func (r *activityRepository) UpdateActivity(ctx context.Context, activity *model.Activity) error {
 	err := r.db.WithContext(ctx).Save(&activity).Error
 	if err != nil {
 		return fmt.Errorf("error updating activity: %v", err)
