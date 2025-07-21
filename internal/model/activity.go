@@ -12,6 +12,7 @@ func init() {
 
 type Activity struct {
 	gorm.Model
+	ActivityId  string
 	UserId      string `gorm:"not null"`
 	Type        int8   `gorm:"not null"`
 	Name        string `gorm:"not null"`
