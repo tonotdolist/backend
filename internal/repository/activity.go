@@ -73,3 +73,12 @@ func (r *activityRepository) UpdateActivity(ctx context.Context, activity *model
 
 	return nil
 }
+
+func (r *activityRepository) DeleteActivity(ctx context.Context, activityId string) error {
+	err := r.db.WithContext(ctx).Where("activity_id = ?", activityId).Delete(&model.Activity{}).Error
+	if err != nil {
+		return fmt.Errorf("error deleting activity: %v", err)
+	}
+
+	return nil
+}
