@@ -65,7 +65,8 @@ func (r *activityRepository) CreateActivity(ctx context.Context, activity *model
 }
 
 func (r *activityRepository) UpdateActivity(ctx context.Context, activity *model.Activity) error {
-	err := r.db.WithContext(ctx).Save(&activity).Error
+	//TODO: check if activity exists?
+	err := r.db.WithContext(ctx).Where("activity_id = ?", activity.ActivityId).Updates(&activity).Error
 	if err != nil {
 		return fmt.Errorf("error updating activity: %v", err)
 	}
