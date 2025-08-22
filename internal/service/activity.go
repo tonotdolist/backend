@@ -61,7 +61,7 @@ func (a activityService) Update(ctx context.Context, UserId string, request *com
 		Date:        request.Date,
 	}
 
-	err := a.activityRepository.CreateActivity(ctx, activityModel)
+	err := a.activityRepository.UpdateActivity(ctx, activityModel)
 	if err != nil {
 		return fmt.Errorf("error updating activity in db:  %w", err)
 	}
