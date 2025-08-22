@@ -15,7 +15,7 @@ type ActivityRepository interface {
 	GetUserActivityInRange(ctx context.Context, userId string, start time.Time, end time.Time) ([]*model.Activity, error)
 	CreateActivity(ctx context.Context, activity *model.Activity) error
 	UpdateActivity(ctx context.Context, activity *model.Activity) error
-	DeleteActivity(ctx context.Context, activityId string) error
+	DeleteActivity(ctx context.Context, activityId string, userId string) error
 }
 
 type activityRepository struct {
@@ -79,8 +79,8 @@ func (r *activityRepository) UpdateActivity(ctx context.Context, activity *model
 	return nil
 }
 
-func (r *activityRepository) DeleteActivity(ctx context.Context, activityId string) error {
-	res := r.db.WithContext(ctx).Where("activity_id = ?", activityId).Delete(&model.Activity{})
+func (r *activityRepository) DeleteActivity(ctx context.Context, activityId string, userId string) error {
+	res := r.db.WithContext(ctx).Where("activity_id = ? AND user_id = ?", activityId, userId).Delete(&model.Activity{})
 	if err := res.Error; err != nil {
 		return fmt.Errorf("error deleting activity: %v", err)
 	}
