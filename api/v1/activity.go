@@ -12,8 +12,6 @@ func init() {
 }
 
 type ActivityCreateRequest struct {
-	ActivityId  string
-	UserId      string `gorm:"not null"`
 	Type        int8   `gorm:"not null"`
 	Name        string `gorm:"not null"`
 	Priority    int8
@@ -24,8 +22,6 @@ type ActivityCreateRequest struct {
 
 func (r *ActivityCreateRequest) ToInternalRequest() interface{} {
 	return &common.ActivityCreateRequest{
-		ActivityId:  r.ActivityId,
-		UserId:      r.UserId,
 		Type:        r.Type,
 		Name:        r.Name,
 		Priority:    r.Priority,
@@ -37,7 +33,6 @@ func (r *ActivityCreateRequest) ToInternalRequest() interface{} {
 
 type ActivityUpdateRequest struct {
 	ActivityId  string
-	UserId      string `gorm:"not null"`
 	Type        int8   `gorm:"not null"`
 	Name        string `gorm:"not null"`
 	Priority    int8
@@ -51,7 +46,6 @@ type ActivityUpdateRequest struct {
 func (r *ActivityUpdateRequest) ToInternalRequest() interface{} {
 	return &common.ActivityUpdateRequest{
 		ActivityId:  r.ActivityId,
-		UserId:      r.UserId,
 		Type:        r.Type,
 		Name:        r.Name,
 		Priority:    r.Priority,

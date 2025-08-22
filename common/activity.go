@@ -3,8 +3,6 @@ package common
 import "time"
 
 type ActivityCreateRequest struct {
-	ActivityId  string
-	UserId      string `gorm:"not null"`
 	Type        int8   `gorm:"not null"`
 	Name        string `gorm:"not null"`
 	Priority    int8
@@ -15,7 +13,6 @@ type ActivityCreateRequest struct {
 
 type ActivityUpdateRequest struct {
 	ActivityId  string
-	UserId      string `gorm:"not null"`
 	Type        int8   `gorm:"not null"`
 	Name        string `gorm:"not null"`
 	Priority    int8
