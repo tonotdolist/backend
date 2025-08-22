@@ -70,8 +70,12 @@ func (a activityService) Update(ctx context.Context, UserId string, request *com
 }
 
 func (a activityService) Delete(ctx context.Context, UserId string, request *common.ActivityDeleteRequest) error {
-	//TODO implement me
-	panic("implement me")
+	err := a.activityRepository.DeleteActivity(ctx, request.ActivityId, UserId)
+	if err != nil {
+		return fmt.Errorf("error deleting activity in db:  %w", err)
+	}
+
+	return nil
 }
 
 //func (a activityService) FetchByCount(ctx context.Context, UserId string, request *common.ActivityFetchByCountRequest) {
