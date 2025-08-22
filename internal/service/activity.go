@@ -51,8 +51,22 @@ func (a activityService) Create(ctx context.Context, UserId string, request *com
 }
 
 func (a activityService) Update(ctx context.Context, UserId string, request *common.ActivityUpdateRequest) error {
-	//TODO implement me
-	panic("implement me")
+	activityModel := &model.Activity{
+		UserId:      UserId,
+		Type:        request.Type,
+		Name:        request.Name,
+		Priority:    request.Priority,
+		Description: request.Description,
+		Location:    request.Location,
+		Date:        request.Date,
+	}
+
+	err := a.activityRepository.CreateActivity(ctx, activityModel)
+	if err != nil {
+		return fmt.Errorf("error updating activity in db:  %w", err)
+	}
+
+	return nil
 }
 
 func (a activityService) Delete(ctx context.Context, UserId string, request *common.ActivityDeleteRequest) error {
