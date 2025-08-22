@@ -65,19 +65,27 @@ func (r *activityRepository) CreateActivity(ctx context.Context, activity *model
 }
 
 func (r *activityRepository) UpdateActivity(ctx context.Context, activity *model.Activity) error {
-	//TODO: check if activity exists?
-	err := r.db.WithContext(ctx).Where("activity_id = ?", activity.ActivityId).Updates(&activity).Error
-	if err != nil {
+	res := r.db.WithContext(ctx).Where("activity_id = ? AND user_id = ?", activity.ActivityId, activity.UserId).Updates(&activity)
+
+	if err := res.Error; err != nil {
 		return fmt.Errorf("error updating activity: %v", err)
+	}
+
+	if res.RowsAffected == 0 {
+		return common.ErrNotFound
 	}
 
 	return nil
 }
 
 func (r *activityRepository) DeleteActivity(ctx context.Context, activityId string) error {
-	err := r.db.WithContext(ctx).Where("activity_id = ?", activityId).Delete(&model.Activity{}).Error
-	if err != nil {
+	res := r.db.WithContext(ctx).Where("activity_id = ?", activityId).Delete(&model.Activity{})
+	if err := res.Error; err != nil {
 		return fmt.Errorf("error deleting activity: %v", err)
+	}
+
+	if res.RowsAffected == 0 {
+		return common.ErrNotFound
 	}
 
 	return nil
