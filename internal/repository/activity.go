@@ -15,6 +15,7 @@ type ActivityRepository interface {
 	GetUserActivityInRange(ctx context.Context, userId string, start time.Time, end time.Time) ([]*model.Activity, error)
 	CreateActivity(ctx context.Context, activity *model.Activity) error
 	UpdateActivity(ctx context.Context, activity *model.Activity) error
+	DeleteActivity(ctx context.Context, activityId string) error
 }
 
 type activityRepository struct {
