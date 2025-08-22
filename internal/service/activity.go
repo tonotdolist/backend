@@ -24,7 +24,7 @@ func NewActivityService(activityRepository repository.ActivityRepository) Activi
 	return &activityService{activityRepository: activityRepository}
 }
 
-func (a activityService) Create(ctx context.Context, UserId string, request *common.ActivityCreateRequest) error {
+func (a *activityService) Create(ctx context.Context, UserId string, request *common.ActivityCreateRequest) error {
 	activityId, err := uuid.NewUUID()
 
 	if err != nil {
@@ -50,7 +50,7 @@ func (a activityService) Create(ctx context.Context, UserId string, request *com
 	return nil
 }
 
-func (a activityService) Update(ctx context.Context, UserId string, request *common.ActivityUpdateRequest) error {
+func (a *activityService) Update(ctx context.Context, UserId string, request *common.ActivityUpdateRequest) error {
 	activityModel := &model.Activity{
 		UserId:      UserId,
 		Type:        request.Type,
@@ -69,7 +69,7 @@ func (a activityService) Update(ctx context.Context, UserId string, request *com
 	return nil
 }
 
-func (a activityService) Delete(ctx context.Context, UserId string, request *common.ActivityDeleteRequest) error {
+func (a *activityService) Delete(ctx context.Context, UserId string, request *common.ActivityDeleteRequest) error {
 	err := a.activityRepository.DeleteActivity(ctx, request.ActivityId, UserId)
 	if err != nil {
 		return fmt.Errorf("error deleting activity in db:  %w", err)
@@ -78,12 +78,12 @@ func (a activityService) Delete(ctx context.Context, UserId string, request *com
 	return nil
 }
 
-//func (a activityService) FetchByCount(ctx context.Context, UserId string, request *common.ActivityFetchByCountRequest) {
+//func (a *activityService) FetchByCount(ctx context.Context, UserId string, request *common.ActivityFetchByCountRequest) {
 //	//TODO implement me
 //	panic("implement me")
 //}
 //
-//func (a activityService) FetchByTimeRange(ctx context.Context, UserId string, request *common.ActivityFetchByTimeRangeRequest) {
+//func (a *activityService) FetchByTimeRange(ctx context.Context, UserId string, request *common.ActivityFetchByTimeRangeRequest) {
 //	//TODO implement me
 //	panic("implement me")
 //}
