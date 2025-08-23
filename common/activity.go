@@ -43,7 +43,8 @@ type ActivityDeleteRequest struct {
 }
 
 type ActivityFetchByCountRequest struct {
-	Count int
+	Offset int
+	Count  int
 }
 
 type ActivityFetchByTimeRangeRequest struct {
