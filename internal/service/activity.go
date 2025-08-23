@@ -13,8 +13,8 @@ type ActivityService interface {
 	Create(ctx context.Context, userId string, request *common.ActivityCreateRequest) error
 	Update(ctx context.Context, userId string, request *common.ActivityUpdateRequest) error
 	Delete(ctx context.Context, userId string, request *common.ActivityDeleteRequest) error
-	//FetchByCount(ctx context.Context, userId string, request *common.ActivityFetchByCountRequest) (error, *common.ActivityFetchByCountResponse)
-	//FetchByTimeRange(ctx context.Context, userId string, request *common.ActivityFetchByTimeRangeRequest) (error, *common.ActivityFetchByTimeRangeResponse)
+	FetchByCount(ctx context.Context, userId string, request *common.ActivityFetchByCountRequest) (error, *common.ActivityFetchByCountResponse)
+	FetchByTimeRange(ctx context.Context, userId string, request *common.ActivityFetchByTimeRangeRequest) (error, *common.ActivityFetchByTimeRangeResponse)
 }
 type activityService struct {
 	activityRepository repository.ActivityRepository
@@ -76,4 +76,36 @@ func (a *activityService) Delete(ctx context.Context, userId string, request *co
 	}
 
 	return nil
+}
+
+func (a *activityService) FetchByCount(ctx context.Context, userId string, request *common.ActivityFetchByCountRequest) (error, *common.ActivityFetchByCountResponse) {
+	activitiesModels, err := a.activityRepository.GetNUserActivity(ctx, userId, request.Count, request.Offset)
+	if err != nil {
+		return fmt.Errorf("error fetching activities by time range from db: %w", err), nil
+	}
+
+	return nil, &common.ActivityFetchByCountResponse{
+		Activities: convertListToCommon(activitiesModels),
+	}
+}
+
+func (a *activityService) FetchByTimeRange(ctx context.Context, userId string, request *common.ActivityFetchByTimeRangeRequest) (error, *common.ActivityFetchByTimeRangeResponse) {
+	activitiesModels, err := a.activityRepository.GetUserActivityInRange(ctx, userId, request.Start, request.End)
+	if err != nil {
+		return fmt.Errorf("error fetching activities by time range from db: %w", err), nil
+	}
+
+	return nil, &common.ActivityFetchByTimeRangeResponse{
+		Activities: convertListToCommon(activitiesModels),
+	}
+}
+
+func convertListToCommon(activities []*model.Activity) []*common.Activity {
+	internalActivities := make([]*common.Activity, len(activities))
+
+	for i, activity := range activities {
+		internalActivities[i] = common.ConvertActivityDbModel(activity)
+	}
+
+	return internalActivities
 }
