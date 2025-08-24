@@ -62,15 +62,15 @@ func (gl *GormLogger) LogMode(level logger.LogLevel) logger.Interface {
 }
 
 func (gl *GormLogger) Info(ctx context.Context, msg string, args ...interface{}) {
-	gl.logger.Info().Ctx(ctx).Msgf(msg, args)
+	gl.logger.Info().Ctx(ctx).Msgf(msg, args...)
 }
 
 func (gl *GormLogger) Warn(ctx context.Context, msg string, args ...interface{}) {
-	gl.logger.Warn().Ctx(ctx).Msgf(msg, args)
+	gl.logger.Warn().Ctx(ctx).Msgf(msg, args...)
 }
 
 func (gl *GormLogger) Error(ctx context.Context, msg string, args ...interface{}) {
-	gl.logger.Error().Ctx(ctx).Msgf(msg, args)
+	gl.logger.Error().Ctx(ctx).Msgf(msg, args...)
 }
 
 func (gl *GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
