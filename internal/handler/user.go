@@ -4,10 +4,9 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"reflect"
-	iapi "tonotdolist/api"
+	api "tonotdolist/api"
 	"tonotdolist/common"
 	"tonotdolist/internal/service"
-	"tonotdolist/pkg/api"
 	"tonotdolist/pkg/log"
 )
 
@@ -35,7 +34,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 	rawReq, err := api.BindJSON(ctx, loginRequestType)
 
 	defer func() {
-		iapi.HandleResponse(ctx, err, resp)
+		api.HandleResponse(ctx, err, resp)
 	}()
 
 	if err != nil {
@@ -70,7 +69,7 @@ func (h *UserHandler) Register(ctx *gin.Context) {
 	rawReq, err := api.BindJSON(ctx, registerRequestType)
 
 	defer func() {
-		iapi.HandleResponse(ctx, err, resp)
+		api.HandleResponse(ctx, err, resp)
 	}()
 
 	if err != nil {
@@ -107,7 +106,7 @@ func (h *UserHandler) Logout(ctx *gin.Context) {
 		logger.Error().Err(err).Msg("error signing user out")
 	}
 
-	iapi.HandleResponse(ctx, err, nil)
+	api.HandleResponse(ctx, err, nil)
 }
 
 func (h *UserHandler) LogoutAll(ctx *gin.Context) {
@@ -119,5 +118,5 @@ func (h *UserHandler) LogoutAll(ctx *gin.Context) {
 		logger.Error().Err(err).Msg("error signing user out")
 	}
 
-	iapi.HandleResponse(ctx, err, nil)
+	api.HandleResponse(ctx, err, nil)
 }
