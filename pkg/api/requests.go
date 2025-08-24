@@ -13,7 +13,7 @@ type VersionedRequest interface {
 }
 
 type VersionedResponse interface {
-	FromInternalResponse(data interface{}) interface{}
+	FromInternalResponse(data interface{})
 }
 
 func RegisterRequest[TInternal any, TVersion any](apiVersion uint) {
@@ -84,7 +84,9 @@ func GetResponse(resp interface{}, version uint) (interface{}, error) {
 	}
 
 	value := reflect.New(versionedRespType.Elem()).Interface()
-	versionedRequest, _ := value.(VersionedResponse)
+	versionedRes, _ := value.(VersionedResponse)
 
-	return versionedRequest.FromInternalResponse(resp), nil
+	versionedRes.FromInternalResponse(resp)
+
+	return versionedRes, nil
 }
