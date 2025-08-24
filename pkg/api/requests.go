@@ -76,14 +76,14 @@ func GetResponse(resp interface{}, version uint) (interface{}, error) {
 		return nil, fmt.Errorf("api version %d not registered on the versioned request to internal request mapping", version)
 	}
 
-	incomingType := reflect.TypeOf(resp)
+	commonRespType := reflect.TypeOf(resp)
 
-	responseType, ok := responseMapping[incomingType]
+	versionedRespType, ok := responseMapping[commonRespType]
 	if !ok {
-		return nil, fmt.Errorf("no versioned response mapping for internal type %q with api version %d", incomingType, version)
+		return nil, fmt.Errorf("no versioned response mapping for internal type %q with api version %d", commonRespType, version)
 	}
 
-	value := reflect.New(responseType.Elem()).Interface()
+	value := reflect.New(versionedRespType.Elem()).Interface()
 	versionedRequest, _ := value.(VersionedResponse)
 
 	return versionedRequest.FromInternalResponse(resp), nil
