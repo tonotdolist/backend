@@ -8,6 +8,9 @@ import (
 func init() {
 	api.RegisterRequest[common.UserRegisterRequest, UserRegisterRequest](version)
 	api.RegisterRequest[common.UserLoginRequest, UserLoginRequest](version)
+
+	api.RegisterResponse[common.UserLoginResponse, UserLoginResponse](version)
+	api.RegisterRequest[common.UserRegisterResponse, UserRegisterResponse](version)
 }
 
 type UserRegisterRequest struct {
@@ -34,5 +37,28 @@ func (r *UserRegisterRequest) ToInternalRequest() interface{} {
 	}
 }
 
+type UserLoginResponse struct {
+	SessionId string `json:"session_id"`
+}
+
+type UserRegisterResponse struct {
+	SessionId string `json:"session_id"`
+}
+
+func (r *UserLoginResponse) FromInternalResponse(resp interface{}) {
+	castedResp := resp.(*common.UserRegisterResponse)
+
+	r.SessionId = castedResp.SessionID
+}
+
+func (r *UserRegisterResponse) FromInternalResponse(resp interface{}) {
+	castedResp := resp.(*common.UserRegisterResponse)
+
+	r.SessionId = castedResp.SessionID
+}
+
 var _ api.VersionedRequest = (*UserLoginRequest)(nil)
 var _ api.VersionedRequest = (*UserRegisterRequest)(nil)
+
+var _ api.VersionedResponse = (*UserLoginResponse)(nil)
+var _ api.VersionedResponse = (*UserRegisterResponse)(nil)
