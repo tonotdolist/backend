@@ -39,7 +39,8 @@ func HandleResponse(ctx *gin.Context, err error, resp interface{}) {
 	ctx.JSON(httpCode, resp)
 }
 
-func BindJSON(ctx *gin.Context, internalType reflect.Type, version uint) (interface{}, error) {
+func BindJSON(ctx *gin.Context, internalType reflect.Type) (interface{}, error) {
+	version := ctx.GetUint(api.ApiVersionContextKey)
 	value, err := api.GetRequest(internalType, version)
 	if err != nil {
 		return nil, err
