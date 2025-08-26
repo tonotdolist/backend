@@ -27,8 +27,8 @@ func RegisterRequest[TInternal any, TVersion any](apiVersion uint) {
 		requestToInternal[apiVersion] = requestMapping
 	}
 
-	internalType := reflect.TypeOf((*TInternal)(nil))
-	versionedType := reflect.TypeOf((*TVersion)(nil))
+	internalType := reflect.TypeOf((*TInternal)(nil)).Elem()
+	versionedType := reflect.TypeOf((*TVersion)(nil)).Elem()
 
 	if !versionedType.Implements(versionedRequestType) {
 		panic(fmt.Sprintf("%s does not implement VersionedRequest interface", versionedType.Name()))
@@ -45,8 +45,8 @@ func RegisterResponse[TInternal any, TVersion any](apiVersion uint) {
 		internalToResponse[apiVersion] = responseMapping
 	}
 
-	internalType := reflect.TypeOf((*TInternal)(nil))
-	versionedType := reflect.TypeOf((*TVersion)(nil))
+	internalType := reflect.TypeOf((*TInternal)(nil)).Elem()
+	versionedType := reflect.TypeOf((*TVersion)(nil)).Elem()
 
 	if !versionedType.Implements(versionedResponseType) {
 		panic(fmt.Sprintf("%T does not implement VersionedResponse interface", versionedType))
@@ -61,7 +61,7 @@ func GetRequest(internalType reflect.Type, version uint) (VersionedRequest, erro
 		return nil, fmt.Errorf("api version %d not registered on the versioned request to internal request mapping", version)
 	}
 
-	requestType, ok := requestMapping[internalType]
+	requestType, ok := requestMapping[internalType.Elem()]
 	if !ok {
 		return nil, fmt.Errorf("no versioned request mapping for internal type %q with api version %d", internalType, version)
 	}
@@ -80,7 +80,7 @@ func GetResponse(resp interface{}, version uint) (interface{}, error) {
 
 	commonRespType := reflect.TypeOf(resp)
 
-	versionedRespType, ok := responseMapping[commonRespType]
+	versionedRespType, ok := responseMapping[commonRespType.Elem()]
 	if !ok {
 		return nil, fmt.Errorf("no versioned response mapping for internal type %q with api version %d", commonRespType, version)
 	}

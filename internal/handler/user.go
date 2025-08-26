@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	loginRequestType    = reflect.TypeOf(&common.UserLoginRequest{})
-	registerRequestType = reflect.TypeOf(&common.UserRegisterRequest{})
+	loginRequestType    = reflect.TypeOf(common.UserLoginRequest{})
+	registerRequestType = reflect.TypeOf(common.UserRegisterRequest{})
 )
 
 type UserHandler struct {
