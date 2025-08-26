@@ -10,7 +10,7 @@ func init() {
 	api.RegisterRequest[common.UserLoginRequest, UserLoginRequest](version)
 
 	api.RegisterResponse[common.UserLoginResponse, UserLoginResponse](version)
-	api.RegisterRequest[common.UserRegisterResponse, UserRegisterResponse](version)
+	api.RegisterResponse[common.UserRegisterResponse, UserRegisterResponse](version)
 }
 
 type UserRegisterRequest struct {
