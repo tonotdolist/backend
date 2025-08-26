@@ -67,7 +67,7 @@ func RegisterResponse[TInternal any, TVersion any](apiVersion uint) {
 	}
 
 	if !versionedType.Implements(versionedResponseType) {
-		panic(fmt.Sprintf("%T does not implement VersionedResponse interface", versionedType))
+		panic(fmt.Sprintf("%s does not implement VersionedResponse interface", versionedType))
 	}
 
 	versionedType = versionedType.Elem()
