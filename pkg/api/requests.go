@@ -5,6 +5,9 @@ import (
 	"reflect"
 )
 
+var versionedRequestType = reflect.TypeOf((*VersionedRequest)(nil)).Elem()
+var versionedResponseType = reflect.TypeOf((*VersionedResponse)(nil)).Elem()
+
 var requestToInternal = make(map[uint]map[reflect.Type]reflect.Type)
 var internalToResponse = make(map[uint]map[reflect.Type]reflect.Type)
 
@@ -27,9 +30,8 @@ func RegisterRequest[TInternal any, TVersion any](apiVersion uint) {
 	internalType := reflect.TypeOf((*TInternal)(nil))
 	versionedType := reflect.TypeOf((*TVersion)(nil))
 
-	_, ok := versionedType.(VersionedRequest)
-	if !ok {
-		panic(fmt.Sprintf("%T does not implement VersionedRequest interface", versionedType))
+	if !versionedType.Implements(versionedRequestType) {
+		panic(fmt.Sprintf("%s does not implement VersionedRequest interface", versionedType.Name()))
 	}
 
 	requestToInternal[apiVersion][internalType] = versionedType
@@ -45,8 +47,8 @@ func RegisterResponse[TInternal any, TVersion any](apiVersion uint) {
 
 	internalType := reflect.TypeOf((*TInternal)(nil))
 	versionedType := reflect.TypeOf((*TVersion)(nil))
-	_, ok := versionedType.(VersionedResponse)
-	if !ok {
+
+	if !versionedType.Implements(versionedResponseType) {
 		panic(fmt.Sprintf("%T does not implement VersionedResponse interface", versionedType))
 	}
 
