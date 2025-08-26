@@ -32,6 +32,7 @@ func HandleResponse(ctx *gin.Context, err error, resp interface{}) {
 		logger := log.GetLoggerFromContext(ctx)
 		logger.Error().Msgf("unable to get versioned response: %s", err.Error())
 		ctx.JSON(500, map[string]string{})
+		return
 	}
 
 	httpCode, resp := apiHandler.HandleResponse(api.GetError(apiHandler, err), versionedResp)
