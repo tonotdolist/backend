@@ -110,7 +110,7 @@ func GetResponse(resp interface{}, version uint) (interface{}, error) {
 
 	versionedRespType, ok := responseMapping[commonRespType]
 	if !ok {
-		return nil, fmt.Errorf("no versioned response mapping for internal type %q with api version %d", commonRespType, version)
+		return nil, fmt.Errorf("no versioned response mapping for internal type %s with api version %d", commonRespType, version)
 	}
 
 	value := reflect.New(versionedRespType).Interface()
