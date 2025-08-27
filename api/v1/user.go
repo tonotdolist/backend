@@ -46,7 +46,7 @@ type UserRegisterResponse struct {
 }
 
 func (r *UserLoginResponse) FromInternalResponse(resp interface{}) {
-	castedResp := resp.(*common.UserRegisterResponse)
+	castedResp := resp.(*common.UserLoginResponse)
 
 	r.SessionId = castedResp.SessionID
 }
