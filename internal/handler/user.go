@@ -28,7 +28,7 @@ func NewUserHandler(handler *Handler, userService service.UserService) *UserHand
 }
 
 func (h *UserHandler) Login(ctx *gin.Context) {
-	var resp *common.UserLoginResponse
+	var resp interface{}
 
 	logger := log.GetLoggerFromContext(ctx)
 	rawReq, err := api.BindJSON(ctx, loginRequestType)
@@ -62,7 +62,7 @@ func (h *UserHandler) Login(ctx *gin.Context) {
 }
 
 func (h *UserHandler) Register(ctx *gin.Context) {
-	var resp *common.UserRegisterResponse
+	var resp interface{}
 
 	logger := log.GetLoggerFromContext(ctx)
 
