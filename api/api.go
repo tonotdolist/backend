@@ -9,14 +9,23 @@ import (
 )
 
 func HandleResponse(ctx *gin.Context, err error, resp interface{}) {
-	if resp == nil {
-		resp = map[string]string{}
-	}
-
 	apiVersion := ctx.GetUint(api.ApiVersionContextKey)
-
 	if err == nil {
 		err = common.ErrSuccess
+	}
+
+	if resp == nil {
+		resp = map[string]string{}
+	} else {
+		versionedResp, err := api.GetResponse(resp, apiVersion)
+		if err != nil {
+			logger := log.GetLoggerFromContext(ctx)
+			logger.Error().Msgf("unable to get versioned response: %s", err.Error())
+			ctx.JSON(500, map[string]string{})
+			return
+		}
+
+		resp = versionedResp
 	}
 
 	apiHandler, ok := api.GetApiVersion(apiVersion)
@@ -27,15 +36,7 @@ func HandleResponse(ctx *gin.Context, err error, resp interface{}) {
 		return
 	}
 
-	versionedResp, err := api.GetResponse(resp, apiVersion)
-	if err != nil {
-		logger := log.GetLoggerFromContext(ctx)
-		logger.Error().Msgf("unable to get versioned response: %s", err.Error())
-		ctx.JSON(500, map[string]string{})
-		return
-	}
-
-	httpCode, resp := apiHandler.HandleResponse(api.GetError(apiHandler, err), versionedResp)
+	httpCode, resp := apiHandler.HandleResponse(api.GetError(apiHandler, err), resp)
 
 	ctx.JSON(httpCode, resp)
 }
