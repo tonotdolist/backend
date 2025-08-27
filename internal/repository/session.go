@@ -10,6 +10,11 @@ import (
 	"tonotdolist/common"
 )
 
+const (
+	allUserSessionsPrefix = "allsessions"
+	sessionPrefix         = "session"
+)
+
 type SessionRepository interface {
 	AddSession(ctx context.Context, userId string, sessionId string, expire int64) error
 	GetSession(ctx context.Context, sessionId string) (*common.UserSession, error)
@@ -45,7 +50,7 @@ func (r *sessionRepository) AddSession(ctx context.Context, userId string, sessi
 }
 
 func (r *sessionRepository) GetSession(ctx context.Context, sessionId string) (*common.UserSession, error) {
-	res := r.rdb.Get(ctx, sessionId)
+	res := r.rdb.Get(ctx, formatSessionKey(sessionId))
 
 	if err := res.Err(); err != nil {
 		if errors.Is(err, redis.Nil) {
@@ -66,8 +71,8 @@ func (r *sessionRepository) GetSession(ctx context.Context, sessionId string) (*
 func (r *sessionRepository) DeleteSession(ctx context.Context, sessionId string, userId string) error {
 	newCtx := context.WithoutCancel(ctx)
 	pipeline := r.rdb.Pipeline()
-	cmd1 := pipeline.Del(newCtx, sessionId)
-	cmd2 := pipeline.SRem(newCtx, userId, sessionId)
+	cmd1 := pipeline.Del(newCtx, formatSessionKey(userId))
+	cmd2 := pipeline.SRem(newCtx, formatSessionListKey(userId), sessionId)
 	_, err := pipeline.Exec(newCtx)
 	if err != nil {
 		return fmt.Errorf("unable to execute delete session pipeline: %w", err)
@@ -77,15 +82,19 @@ func (r *sessionRepository) DeleteSession(ctx context.Context, sessionId string,
 }
 
 func (r *sessionRepository) DeleteAllUserSession(ctx context.Context, userId string) error {
-	userSessionList, err := r.rdb.SMembers(ctx, userId).Result()
+	userSessionList, err := r.rdb.SMembers(ctx, formatSessionListKey(userId)).Result()
 	if err != nil {
 		return fmt.Errorf("error fetching user session list: %w", err)
 	}
 
 	if len(userSessionList) > 0 {
+		for i := range userSessionList {
+			userSessionList[i] = formatSessionKey(userSessionList[i])
+		}
+
 		pipeline := r.rdb.Pipeline()
 		cmd1 := pipeline.Del(ctx, userSessionList...)
-		cmd2 := pipeline.Del(ctx, userId)
+		cmd2 := pipeline.Del(ctx, formatSessionListKey(userId))
 
 		_, err = pipeline.Exec(ctx)
 		if err != nil {
@@ -100,6 +109,14 @@ func (r *sessionRepository) DeleteAllUserSession(ctx context.Context, userId str
 
 func formatContent(session *common.UserSession) string {
 	return fmt.Sprintf("%s:%d", session.UserID, session.Expire)
+}
+
+func formatSessionKey(sessionId string) string {
+	return sessionPrefix + ":" + sessionId
+}
+
+func formatSessionListKey(userId string) string {
+	return allUserSessionsPrefix + ":" + userId
 }
 
 func parseContent(content string) (*common.UserSession, error) {
