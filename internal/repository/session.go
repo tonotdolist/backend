@@ -38,11 +38,11 @@ func (r *sessionRepository) AddSession(ctx context.Context, userId string, sessi
 		Expire: expire,
 	}
 
-	if err := r.rdb.Set(ctx, sessionId, formatContent(session), 0).Err(); err != nil {
+	if err := r.rdb.Set(ctx, formatSessionKey(sessionId), formatContent(session), 0).Err(); err != nil {
 		return err
 	}
 
-	if err := r.rdb.SAdd(ctx, userId, sessionId).Err(); err != nil {
+	if err := r.rdb.SAdd(ctx, formatSessionListKey(userId), sessionId).Err(); err != nil {
 		return err
 	}
 
@@ -71,7 +71,7 @@ func (r *sessionRepository) GetSession(ctx context.Context, sessionId string) (*
 func (r *sessionRepository) DeleteSession(ctx context.Context, sessionId string, userId string) error {
 	newCtx := context.WithoutCancel(ctx)
 	pipeline := r.rdb.Pipeline()
-	cmd1 := pipeline.Del(newCtx, formatSessionKey(userId))
+	cmd1 := pipeline.Del(newCtx, formatSessionKey(sessionId))
 	cmd2 := pipeline.SRem(newCtx, formatSessionListKey(userId), sessionId)
 	_, err := pipeline.Exec(newCtx)
 	if err != nil {
