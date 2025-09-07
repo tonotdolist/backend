@@ -48,6 +48,10 @@ func NewUserService(userRepository repository.UserRepository, sessionRepository 
 }
 
 func (s *userService) GetSession(ctx context.Context, sessionId string) (string, error) {
+	if err := uuid.Validate(sessionId); err != nil {
+		return "", common.ErrUnauthorized
+	}
+
 	session, err := s.sessionRepository.GetSession(ctx, sessionId)
 	if err != nil {
 		if errors.Is(err, common.ErrNotFound) {
