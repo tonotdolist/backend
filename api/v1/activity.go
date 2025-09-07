@@ -35,7 +35,7 @@ func (r *ActivityCreateRequest) ToInternalRequest() interface{} {
 }
 
 type ActivityUpdateRequest struct {
-	ActivityId  string    `json:"activity_id" binding:"required"`
+	ActivityId  string    `json:"activity_id" binding:"required,id"`
 	Type        int8      `json:"type" binding:"required"`
 	Name        string    `json:"name" binding:"required"`
 	Priority    int8      `json:"priority" binding:"required"`
@@ -61,7 +61,7 @@ func (r *ActivityUpdateRequest) ToInternalRequest() interface{} {
 }
 
 type ActivityDeleteRequest struct {
-	ActivityId string `json:"activity_id" binding:"required"`
+	ActivityId string `json:"activity_id" binding:"required,id"`
 }
 
 func (r *ActivityDeleteRequest) ToInternalRequest() interface{} {

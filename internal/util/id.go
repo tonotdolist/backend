@@ -1,6 +1,9 @@
 package util
 
-import "github.com/google/uuid"
+import (
+	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
+)
 
 func NewID() (string, error) {
 	id, err := uuid.NewRandom()
@@ -13,4 +16,12 @@ func NewID() (string, error) {
 
 func ValidateID(id string) bool {
 	return uuid.Validate(id) == nil
+}
+
+var ValidID validator.Func = func(fl validator.FieldLevel) bool {
+	id, ok := fl.Field().Interface().(string)
+	if ok {
+		return ValidateID(id)
+	}
+	return false
 }

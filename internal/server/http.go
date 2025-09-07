@@ -2,11 +2,14 @@ package server
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gin-gonic/gin/binding"
+	"github.com/go-playground/validator/v10"
 	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 	"tonotdolist/internal/handler"
 	"tonotdolist/internal/middleware"
 	"tonotdolist/internal/service"
+	"tonotdolist/internal/util"
 	"tonotdolist/pkg/config"
 	"tonotdolist/pkg/server/http"
 )
@@ -21,7 +24,12 @@ func init() {
 }
 
 func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, userHandler *handler.UserHandler, activityHandler *handler.ActivityHandler, userService service.UserService) *http.Server {
-	s := http.NewServer(gin.New(), logger, http.WithHost(viper.GetString(httpHostKey)), http.WithPort(viper.GetUint16(httpPortKey)))
+	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
+		v.RegisterValidation("id", util.ValidID)
+	}
+
+	engine := gin.New()
+	s := http.NewServer(engine, logger, http.WithHost(viper.GetString(httpHostKey)), http.WithPort(viper.GetUint16(httpPortKey)))
 
 	s.Use(middleware.LogMiddleware(logger)).Use(middleware.VersionMiddleware()).Use(gin.Recovery())
 

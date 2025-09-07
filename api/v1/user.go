@@ -38,11 +38,11 @@ func (r *UserRegisterRequest) ToInternalRequest() interface{} {
 }
 
 type UserLoginResponse struct {
-	SessionId string `json:"session_id"`
+	SessionId string `json:"session_id,id"`
 }
 
 type UserRegisterResponse struct {
-	SessionId string `json:"session_id"`
+	SessionId string `json:"session_id,id"`
 }
 
 func (r *UserLoginResponse) FromInternalResponse(resp interface{}) {
