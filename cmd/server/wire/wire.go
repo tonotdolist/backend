@@ -32,6 +32,7 @@ var serviceSet = wire.NewSet(
 var handlerSet = wire.NewSet(
 	handler.NewHandler,
 	handler.NewUserHandler,
+	handler.NewActivityHandler,
 )
 
 func InitializeApp(ctx context.Context, logger zerolog.Logger, conf *viper.Viper) *app.App {
