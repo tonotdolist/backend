@@ -14,7 +14,11 @@ import (
 
 func main() {
 	logger := log.NewLogger()
-	conf := config.NewConfig(logger, "config/local.yaml")
+	conf, err := config.NewConfig("config/local.yaml")
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to load config")
+	}
+
 	if conf.GetBool("prod") {
 		logger = logger.Level(zerolog.WarnLevel)
 	}

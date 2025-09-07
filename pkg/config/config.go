@@ -1,7 +1,7 @@
 package config
 
 import (
-	"github.com/rs/zerolog"
+	"fmt"
 	"github.com/spf13/viper"
 )
 
@@ -13,25 +13,30 @@ func RegisterRequiredKey(keys ...string) {
 	}
 }
 
-func ValidateRequiredKeys(logger zerolog.Logger, v *viper.Viper) {
+func ValidateRequiredKeys(v *viper.Viper) error {
 	for _, key := range requiredKeys {
 		if !v.IsSet(key) {
-			logger.Fatal().Str("config_key", key).Msg("missing required config key")
+			return fmt.Errorf("missing required config key: %s", key)
 		}
 	}
+
+	return nil
 }
 
-func NewConfig(logger zerolog.Logger, path string) *viper.Viper {
+func NewConfig(path string) (*viper.Viper, error) {
 	conf := viper.New()
 	conf.SetConfigFile(path)
 
 	err := conf.ReadInConfig()
 
 	if err != nil {
-		logger.Fatal().Err(err).Msg("failed to load app config")
+		return nil, fmt.Errorf("failed to load app config: %w", err)
 	}
 
-	ValidateRequiredKeys(logger, conf)
+	err = ValidateRequiredKeys(conf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to validate config: %w", err)
+	}
 
-	return conf
+	return conf, nil
 }

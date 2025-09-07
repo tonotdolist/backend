@@ -11,11 +11,15 @@ import (
 
 func main() {
 	logger := log.NewLogger()
-	conf := config.NewConfig(logger, "config/local.yaml")
+	conf, err := config.NewConfig("config/local.yaml")
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to load config")
+	}
+
 	ctx := context.Background()
 	db := repository.NewDB(ctx, logger, conf)
 
-	err := migrate.Migrate(db)
+	err = migrate.Migrate(db)
 
 	if err != nil {
 		logger.Fatal().Err(err).Msg("error migrating DB")
