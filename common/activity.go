@@ -7,8 +7,8 @@ import (
 
 type Activity struct {
 	ActivityId  string
-	Type        int8   `gorm:"not null"`
-	Name        string `gorm:"not null"`
+	Type        int8
+	Name        string
 	Priority    int8
 	Description string
 	Location    string
@@ -18,8 +18,8 @@ type Activity struct {
 }
 
 type ActivityCreateRequest struct {
-	Type        int8   `gorm:"not null"`
-	Name        string `gorm:"not null"`
+	Type        int8
+	Name        string
 	Priority    int8
 	Description string
 	Location    string
@@ -28,14 +28,14 @@ type ActivityCreateRequest struct {
 
 type ActivityUpdateRequest struct {
 	ActivityId  string
-	Type        int8   `gorm:"not null"`
-	Name        string `gorm:"not null"`
+	Type        int8
+	Name        string
 	Priority    int8
 	Description string
 	Location    string
 	Date        time.Time
 
-	Completed bool `gorm:"default:false"`
+	Completed bool
 }
 
 type ActivityDeleteRequest struct {
