@@ -20,7 +20,7 @@ func init() {
 	config.RegisterRequiredKey(httpHostKey, httpPortKey)
 }
 
-func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, userHandler *handler.UserHandler, userService service.UserService) *http.Server {
+func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, userHandler *handler.UserHandler, activityHandler *handler.ActivityHandler, userService service.UserService) *http.Server {
 	s := http.NewServer(gin.New(), logger, http.WithHost(viper.GetString(httpHostKey)), http.WithPort(viper.GetUint16(httpPortKey)))
 
 	s.Use(middleware.LogMiddleware(logger)).Use(middleware.VersionMiddleware()).Use(gin.Recovery())
@@ -33,9 +33,18 @@ func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, userHandler *handl
 	}
 
 	{
-		auth := v1.Group("/").Use(middleware.AuthMiddleware(userService))
-		auth.POST("logout", userHandler.Logout)
-		auth.POST("logoutall", userHandler.LogoutAll)
+		auth := v1.Group("/")
+		auth.Use(middleware.AuthMiddleware(userService))
+
+		{
+			auth.POST("logout", userHandler.Logout)
+			auth.POST("logoutall", userHandler.LogoutAll)
+		}
+
+		activity := auth.Group("activity/")
+		{
+			activity.POST("create", activityHandler.CreateActivity)
+		}
 	}
 
 	return s
