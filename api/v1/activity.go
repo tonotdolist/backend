@@ -7,8 +7,11 @@ import (
 )
 
 func init() {
-	api.RegisterRequest[common.UserRegisterRequest, UserRegisterRequest](version)
-	api.RegisterRequest[common.UserLoginRequest, UserLoginRequest](version)
+	api.RegisterRequest[common.ActivityCreateRequest, ActivityCreateRequest](version)
+	api.RegisterRequest[common.ActivityDeleteRequest, ActivityDeleteRequest](version)
+	api.RegisterRequest[common.ActivityUpdateRequest, ActivityUpdateRequest](version)
+	api.RegisterRequest[common.ActivityFetchByCountRequest, ActivityFetchByCountRequest](version)
+	api.RegisterRequest[common.ActivityFetchByTimeRangeRequest, ActivityFetchByTimeRangeRequest](version)
 }
 
 type ActivityCreateRequest struct {
