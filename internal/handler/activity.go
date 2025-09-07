@@ -19,6 +19,13 @@ type ActivityHandler struct {
 	activityService service.ActivityService
 }
 
+func NewActivityHandler(handler *Handler, activityService service.ActivityService) *ActivityHandler {
+	return &ActivityHandler{
+		Handler:         handler,
+		activityService: activityService,
+	}
+}
+
 func (h *ActivityHandler) CreateActivity(ctx *gin.Context) {
 	userId := getUserId(ctx)
 
