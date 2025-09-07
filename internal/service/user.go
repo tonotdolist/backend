@@ -4,13 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
 	"time"
 	"tonotdolist/common"
 	"tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
+	"tonotdolist/internal/util"
 	"tonotdolist/pkg/config"
 )
 
@@ -48,10 +48,6 @@ func NewUserService(userRepository repository.UserRepository, sessionRepository 
 }
 
 func (s *userService) GetSession(ctx context.Context, sessionId string) (string, error) {
-	if err := uuid.Validate(sessionId); err != nil {
-		return "", common.ErrUnauthorized
-	}
-
 	session, err := s.sessionRepository.GetSession(ctx, sessionId)
 	if err != nil {
 		if errors.Is(err, common.ErrNotFound) {
@@ -92,13 +88,13 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 		return "", err
 	}
 
-	id, err := uuid.NewRandom()
+	id, err := util.NewID()
 	if err != nil {
 		return "", fmt.Errorf("error generating user id: %w", err)
 	}
 
 	user := &model.User{
-		UserId:   id.String(),
+		UserId:   id,
 		Email:    req.Email,
 		Password: string(hashedPassword),
 	}
@@ -117,11 +113,10 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 }
 
 func (s *userService) createSession(ctx context.Context, userId string) (string, error) {
-	uuid, err := uuid.NewUUID()
+	sessionId, err := util.NewID()
 	if err != nil {
 		return "", fmt.Errorf("error generating session id: %w", err)
 	}
-	sessionId := uuid.String()
 
 	err = s.sessionRepository.AddSession(ctx, userId, sessionId, time.Now().Unix()+s.sessionLength)
 	if err != nil {

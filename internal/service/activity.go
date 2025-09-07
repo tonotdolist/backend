@@ -3,10 +3,10 @@ package service
 import (
 	"context"
 	"fmt"
-	"github.com/google/uuid"
 	"tonotdolist/common"
 	"tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
+	"tonotdolist/internal/util"
 )
 
 type ActivityService interface {
@@ -25,14 +25,14 @@ func NewActivityService(activityRepository repository.ActivityRepository) Activi
 }
 
 func (a *activityService) Create(ctx context.Context, userId string, request *common.ActivityCreateRequest) error {
-	activityId, err := uuid.NewUUID()
+	activityId, err := util.NewID()
 
 	if err != nil {
-		return fmt.Errorf("error generating activity uuid: %w", err)
+		return fmt.Errorf("error generating activity id: %w", err)
 	}
 
 	activityModel := &model.Activity{
-		ActivityId:  activityId.String(),
+		ActivityId:  activityId,
 		UserId:      userId,
 		Type:        request.Type,
 		Name:        request.Name,
