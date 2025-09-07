@@ -15,12 +15,12 @@ func init() {
 }
 
 type ActivityCreateRequest struct {
-	Type        int8   `gorm:"not null"`
-	Name        string `gorm:"not null"`
-	Priority    int8
-	Description string
-	Location    string
-	Date        time.Time
+	Type        int8      `json:"type" binding:"required"`
+	Name        string    `json:"name" binding:"required"`
+	Priority    int8      `json:"priority" binding:"required"`
+	Description string    `json:"description" binding:"required"`
+	Location    string    `json:"location" binding:"required"`
+	Date        time.Time `json:"date" binding:"required"`
 }
 
 func (r *ActivityCreateRequest) ToInternalRequest() interface{} {
@@ -35,15 +35,15 @@ func (r *ActivityCreateRequest) ToInternalRequest() interface{} {
 }
 
 type ActivityUpdateRequest struct {
-	ActivityId  string
-	Type        int8   `gorm:"not null"`
-	Name        string `gorm:"not null"`
-	Priority    int8
-	Description string
-	Location    string
-	Date        time.Time
+	ActivityId  string    `json:"activity_id" binding:"required"`
+	Type        int8      `json:"type" binding:"required"`
+	Name        string    `json:"name" binding:"required"`
+	Priority    int8      `json:"priority" binding:"required"`
+	Description string    `json:"description" binding:"required"`
+	Location    string    `json:"location" binding:"required"`
+	Date        time.Time `json:"date" binding:"required"`
 
-	Completed bool `gorm:"default:false"`
+	Completed bool `json:"completed" binding:"required"`
 }
 
 func (r *ActivityUpdateRequest) ToInternalRequest() interface{} {
@@ -61,7 +61,7 @@ func (r *ActivityUpdateRequest) ToInternalRequest() interface{} {
 }
 
 type ActivityDeleteRequest struct {
-	ActivityId string
+	ActivityId string `json:"activity_id" binding:"required"`
 }
 
 func (r *ActivityDeleteRequest) ToInternalRequest() interface{} {
@@ -71,7 +71,7 @@ func (r *ActivityDeleteRequest) ToInternalRequest() interface{} {
 }
 
 type ActivityFetchByCountRequest struct {
-	Count int
+	Count int `json:"activity_id" binding:"required"`
 }
 
 func (r *ActivityFetchByCountRequest) ToInternalRequest() interface{} {
@@ -81,8 +81,8 @@ func (r *ActivityFetchByCountRequest) ToInternalRequest() interface{} {
 }
 
 type ActivityFetchByTimeRangeRequest struct {
-	Start time.Time
-	End   time.Time
+	Start time.Time `json:"start" binding:"required"`
+	End   time.Time `json:"end" binding:"required"`
 }
 
 func (r *ActivityFetchByTimeRangeRequest) ToInternalRequest() interface{} {
