@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
+	"regexp"
 	"time"
 	"tonotdolist/common"
 	"tonotdolist/internal/model"
@@ -17,6 +19,12 @@ import (
 const (
 	bcryptCostKey    = "auth.bcryptCost"
 	sessionLengthKey = "auth.sessionLength"
+
+	// 1+ numbers
+	// 1+ uppercase characters
+	// 1+ lowercase characters
+	// 1+ special characters
+	regexString = "(?=.*[^a-zA-Z0-9]+)(?=.*[0-9]+)(?=.*[a-z]+)(?=.*[A-Z]+).*"
 )
 
 func init() {
@@ -36,14 +44,23 @@ type userService struct {
 	sessionLength     int64
 	userRepository    repository.UserRepository
 	sessionRepository repository.SessionRepository
+
+	regex *regexp.Regexp
 }
 
-func NewUserService(userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper) UserService {
+func NewUserService(userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper, logger zerolog.Logger) UserService {
+	regex, err := regexp.Compile(regexString)
+	if err != nil {
+		logger.Fatal().Msgf("error compiling regex: %v", err)
+	}
+
 	return &userService{
 		userRepository:    userRepository,
 		sessionRepository: sessionRepository,
 		bcryptCost:        viper.GetInt(bcryptCostKey),
 		sessionLength:     viper.GetInt64(sessionLengthKey),
+
+		regex: regex,
 	}
 }
 
@@ -110,6 +127,23 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 	}
 
 	return sessionId, nil
+}
+
+func (s *userService) validatePassword(password string) error {
+	length := len(password)
+	if length < 8 {
+		return common.ErrPasswordTooShort
+	}
+
+	if length > 72 { // 72 because of bcrypt limit
+		return common.ErrPasswordTooLong
+	}
+
+	if !s.regex.Match([]byte(password)) {
+		return common.ErrBadPassword
+	}
+
+	return nil
 }
 
 func (s *userService) createSession(ctx context.Context, userId string) (string, error) {

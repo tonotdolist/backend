@@ -15,12 +15,12 @@ func init() {
 
 type UserRegisterRequest struct {
 	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8,max=72"`
+	Password string `json:"password" binding:"required"`
 }
 
 type UserLoginRequest struct {
 	Email    string `json:"email" binding:"required,email"`
-	Password string `json:"password" binding:"required,min=8,max=72"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (r *UserLoginRequest) ToInternalRequest() interface{} {

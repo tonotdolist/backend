@@ -10,6 +10,10 @@ var (
 	ErrUnauthorized = newError("unauthorized")
 	ErrNotFound     = newError("content not found")
 	ErrConflict     = newError("conflict")
+
+	ErrBadPassword      = newError("bad password")
+	ErrPasswordTooShort = newError("password too short")
+	ErrPasswordTooLong  = newError("password too long")
 )
 
 func newError(msg string) error {
