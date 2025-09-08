@@ -4,27 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/rs/zerolog"
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/bcrypt"
-	"regexp"
 	"time"
 	"tonotdolist/common"
 	"tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
 	"tonotdolist/internal/util"
 	"tonotdolist/pkg/config"
+	"unicode"
 )
 
 const (
 	bcryptCostKey    = "auth.bcryptCost"
 	sessionLengthKey = "auth.sessionLength"
-
-	// 1+ numbers
-	// 1+ uppercase characters
-	// 1+ lowercase characters
-	// 1+ special characters
-	regexString = "(?=.*[^a-zA-Z0-9]+)(?=.*[0-9]+)(?=.*[a-z]+)(?=.*[A-Z]+).*"
 )
 
 func init() {
@@ -44,23 +37,14 @@ type userService struct {
 	sessionLength     int64
 	userRepository    repository.UserRepository
 	sessionRepository repository.SessionRepository
-
-	regex *regexp.Regexp
 }
 
-func NewUserService(userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper, logger zerolog.Logger) UserService {
-	regex, err := regexp.Compile(regexString)
-	if err != nil {
-		logger.Fatal().Msgf("error compiling regex: %v", err)
-	}
-
+func NewUserService(userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper) UserService {
 	return &userService{
 		userRepository:    userRepository,
 		sessionRepository: sessionRepository,
 		bcryptCost:        viper.GetInt(bcryptCostKey),
 		sessionLength:     viper.GetInt64(sessionLengthKey),
-
-		regex: regex,
 	}
 }
 
@@ -139,7 +123,35 @@ func (s *userService) validatePassword(password string) error {
 		return common.ErrPasswordTooLong
 	}
 
-	if !s.regex.Match([]byte(password)) {
+	// 1+ numbers
+	// 1+ uppercase characters
+	// 1+ lowercase characters
+	// 1+ special characters
+
+	var (
+		hasUpper, hasLower, hasDigit, hasSpecial bool
+	)
+
+	for _, ch := range password {
+		if unicode.IsLower(ch) {
+			hasLower = true
+			continue
+		}
+
+		if unicode.IsUpper(ch) {
+			hasUpper = true
+			continue
+		}
+
+		if unicode.IsDigit(ch) {
+			hasDigit = true
+			continue
+		}
+
+		hasSpecial = true
+	}
+
+	if !(hasUpper && hasLower && hasDigit && hasSpecial) {
 		return common.ErrBadPassword
 	}
 
