@@ -11,6 +11,7 @@ import (
 	"tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
 	"tonotdolist/internal/util"
+	"tonotdolist/pkg/clock"
 	"tonotdolist/pkg/config"
 	"unicode"
 )
@@ -33,14 +34,16 @@ type UserService interface {
 }
 
 type userService struct {
+	clock             clock.Clock
 	bcryptCost        int
 	sessionLength     int64
 	userRepository    repository.UserRepository
 	sessionRepository repository.SessionRepository
 }
 
-func NewUserService(userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper) UserService {
+func NewUserService(clock clock.Clock, userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper) UserService {
 	return &userService{
+		clock:             clock,
 		userRepository:    userRepository,
 		sessionRepository: sessionRepository,
 		bcryptCost:        viper.GetInt(bcryptCostKey),
@@ -58,7 +61,7 @@ func (s *userService) GetSession(ctx context.Context, sessionId string) (string,
 		return "", fmt.Errorf("error fetching user session info from repo: %w", err)
 	}
 
-	if time.Now().After(time.Unix(session.Expire, 0)) {
+	if s.clock.Now().After(time.Unix(session.Expire, 0)) {
 		return "", common.ErrUnauthorized
 	}
 
@@ -164,7 +167,7 @@ func (s *userService) createSession(ctx context.Context, userId string) (string,
 		return "", fmt.Errorf("error generating session id: %w", err)
 	}
 
-	err = s.sessionRepository.AddSession(ctx, userId, sessionId, time.Now().Unix()+s.sessionLength)
+	err = s.sessionRepository.AddSession(ctx, userId, sessionId, s.clock.Now().Unix()+s.sessionLength)
 	if err != nil {
 		return "", fmt.Errorf("error adding session id to repo: %w", err)
 	}

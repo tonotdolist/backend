@@ -13,6 +13,7 @@ import (
 	"tonotdolist/internal/repository"
 	"tonotdolist/internal/server"
 	"tonotdolist/internal/service"
+	"tonotdolist/pkg/clock"
 )
 
 var repositorySet = wire.NewSet(
@@ -37,6 +38,8 @@ var handlerSet = wire.NewSet(
 
 func InitializeApp(ctx context.Context, logger zerolog.Logger, conf *viper.Viper) *app.App {
 	panic(wire.Build(
+		clock.NewSystemClock,
+
 		repositorySet,
 		serviceSet,
 		handlerSet,
