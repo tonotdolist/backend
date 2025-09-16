@@ -89,6 +89,10 @@ func (s *userService) Login(ctx context.Context, req *common.UserLoginRequest) (
 }
 
 func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequest) (string, error) {
+	if err := s.validatePassword(req.Password); err != nil {
+		return "", fmt.Errorf("password validation failed: %w", err)
+	}
+
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.bcryptCost)
 	if err != nil {
 		return "", err
