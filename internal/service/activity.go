@@ -17,15 +17,19 @@ type ActivityService interface {
 	FetchByTimeRange(ctx context.Context, userId string, request *common.ActivityFetchByTimeRangeRequest) (error, *common.ActivityFetchByTimeRangeResponse)
 }
 type activityService struct {
+	idProvider         util.IDProvider
 	activityRepository repository.ActivityRepository
 }
 
-func NewActivityService(activityRepository repository.ActivityRepository) ActivityService {
-	return &activityService{activityRepository: activityRepository}
+func NewActivityService(idProvider util.IDProvider, activityRepository repository.ActivityRepository) ActivityService {
+	return &activityService{
+		idProvider:         idProvider,
+		activityRepository: activityRepository,
+	}
 }
 
 func (a *activityService) Create(ctx context.Context, userId string, request *common.ActivityCreateRequest) error {
-	activityId, err := util.NewID()
+	activityId, err := a.idProvider.NewID()
 
 	if err != nil {
 		return fmt.Errorf("error generating activity id: %w", err)

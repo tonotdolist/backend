@@ -23,9 +23,9 @@ func init() {
 	config.RegisterRequiredKey(httpHostKey, httpPortKey)
 }
 
-func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, userHandler *handler.UserHandler, activityHandler *handler.ActivityHandler, userService service.UserService) *http.Server {
+func NewHTTPServer(logger zerolog.Logger, viper *viper.Viper, idProvider util.IDProvider, userHandler *handler.UserHandler, activityHandler *handler.ActivityHandler, userService service.UserService) *http.Server {
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		v.RegisterValidation("id", util.ValidID)
+		v.RegisterValidation("id", idProvider.Validator())
 	}
 
 	engine := gin.New()

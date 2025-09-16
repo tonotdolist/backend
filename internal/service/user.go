@@ -35,15 +35,17 @@ type UserService interface {
 
 type userService struct {
 	clock             clock.Clock
+	idProvider        util.IDProvider
 	bcryptCost        int
 	sessionLength     int64
 	userRepository    repository.UserRepository
 	sessionRepository repository.SessionRepository
 }
 
-func NewUserService(clock clock.Clock, userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper) UserService {
+func NewUserService(clock clock.Clock, idProvider util.IDProvider, userRepository repository.UserRepository, sessionRepository repository.SessionRepository, viper *viper.Viper) UserService {
 	return &userService{
 		clock:             clock,
+		idProvider:        idProvider,
 		userRepository:    userRepository,
 		sessionRepository: sessionRepository,
 		bcryptCost:        viper.GetInt(bcryptCostKey),
@@ -92,7 +94,7 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 		return "", err
 	}
 
-	id, err := util.NewID()
+	id, err := s.idProvider.NewID()
 	if err != nil {
 		return "", fmt.Errorf("error generating user id: %w", err)
 	}
@@ -162,7 +164,7 @@ func (s *userService) validatePassword(password string) error {
 }
 
 func (s *userService) createSession(ctx context.Context, userId string) (string, error) {
-	sessionId, err := util.NewID()
+	sessionId, err := s.idProvider.NewID()
 	if err != nil {
 		return "", fmt.Errorf("error generating session id: %w", err)
 	}
