@@ -19,7 +19,8 @@ func init() {
 }
 
 func NewLogger() zerolog.Logger {
-	return zerolog.New(os.Stdout).Level(zerolog.DebugLevel).With().Timestamp().Logger()
+	writer := zerolog.ConsoleWriter{Out: os.Stdout, TimeFormat: "15:04:05"}
+	return zerolog.New(writer).Level(zerolog.DebugLevel).With().Timestamp().Logger()
 }
 
 func NewGormLogger(logger zerolog.Logger, viper *viper.Viper) logger.Interface {
