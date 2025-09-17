@@ -95,7 +95,7 @@ func (s *userService) Register(ctx context.Context, req *common.UserRegisterRequ
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), s.bcryptCost)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("error hashing password, %w", err)
 	}
 
 	id, err := s.idProvider.NewID()
