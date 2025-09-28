@@ -18,7 +18,7 @@ func main() {
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to open config")
 	}
-	conf, err := config.NewConfig(f)
+	conf, err := config.NewConfig(f, "yaml")
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to load config")
 	}

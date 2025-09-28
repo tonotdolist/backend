@@ -24,9 +24,10 @@ func ValidateRequiredKeys(v *viper.Viper) error {
 	return nil
 }
 
-func NewConfig(reader io.Reader) (*viper.Viper, error) {
+func NewConfig(reader io.Reader, configType string) (*viper.Viper, error) {
 	conf := viper.New()
 
+	conf.SetConfigType(configType)
 	err := conf.ReadConfig(reader)
 
 	if err != nil {
