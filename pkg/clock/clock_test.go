@@ -13,10 +13,7 @@ func TestSystemClock_Now(t *testing.T) {
 	timeNow := time.Now()
 	clockTimeNow := clock.Now()
 
-	diff := timeNow.Sub(clockTimeNow)
-	if diff < 0 {
-		diff = -diff
-	}
+	diff := timeNow.Sub(clockTimeNow).Abs()
 
-	assert.Less(t, diff, tolerance)
+	assert.Less(t, diff, tolerance, "The clock time and the actual system time differed too much. ")
 }
