@@ -155,6 +155,7 @@ func TestUserService_Register(t *testing.T) {
 						err := bcrypt.CompareHashAndPassword([]byte(actualUser.Password), []byte(tc.password))
 						assert.NoError(t, err)
 
+						// verify bcrypt cost
 						cost, err := bcrypt.Cost([]byte(actualUser.Password))
 						require.NoError(t, err, "Unexpected error while trying to get cost of generated password.")
 						assert.Equal(t, bcryptCost, cost, "Password cost does not match expected cost. ")
