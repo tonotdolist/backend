@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	bcryptCost       = 0
+	bcryptCost       = 1
 	clockTime  int64 = 1000
 	id               = "5627a05a-111a-4ba8-977b-9ba0d17c4793"
 
