@@ -35,8 +35,8 @@ var conf *viper.Viper
 
 func init() {
 	conf = viper.New()
-	conf.Set("auth.bcryptCost", bcryptCost)
-	conf.Set("auth.sessionLength", sessionLength)
+	conf.Set("auth.bcryptCost", bcryptCost)       // tested in register success test case under mock user repo
+	conf.Set("auth.sessionLength", sessionLength) // tested in register & login test cases @ the end result check
 }
 
 func TestUserService_GetSession(t *testing.T) {
@@ -151,6 +151,10 @@ func TestUserService_Register(t *testing.T) {
 						assert.Equal(t, id, actualUser.UserId)
 						err := bcrypt.CompareHashAndPassword([]byte(actualUser.Password), []byte(tc.password))
 						assert.NoError(t, err)
+
+						cost, err := bcrypt.Cost([]byte(actualUser.Password))
+						require.NoError(t, err, "Unexpected error while trying to get cost of generated password.")
+						assert.Equal(t, bcryptCost, cost, "Password cost does not match expected cost. ")
 
 						return nil
 					}).Times(1)
