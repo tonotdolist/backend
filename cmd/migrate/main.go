@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"os"
 	"tonotdolist/internal/log"
 	_ "tonotdolist/internal/model"
 	"tonotdolist/internal/repository"
@@ -11,7 +12,12 @@ import (
 
 func main() {
 	logger := log.NewLogger()
-	conf, err := config.NewConfig("config/local.yaml")
+
+	f, err := os.Open("config/local.yaml")
+	if err != nil {
+		logger.Fatal().Err(err).Msg("failed to open config")
+	}
+	conf, err := config.NewConfig(f)
 	if err != nil {
 		logger.Fatal().Err(err).Msg("failed to load config")
 	}

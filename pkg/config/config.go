@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"github.com/spf13/viper"
+	"io"
 )
 
 var requiredKeys []string
@@ -23,11 +24,10 @@ func ValidateRequiredKeys(v *viper.Viper) error {
 	return nil
 }
 
-func NewConfig(path string) (*viper.Viper, error) {
+func NewConfig(reader io.Reader) (*viper.Viper, error) {
 	conf := viper.New()
-	conf.SetConfigFile(path)
 
-	err := conf.ReadInConfig()
+	err := conf.ReadConfig(reader)
 
 	if err != nil {
 		return nil, fmt.Errorf("failed to load app config: %w", err)
