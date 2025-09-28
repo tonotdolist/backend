@@ -19,7 +19,7 @@ import (
 )
 
 const (
-	bcryptCost       = 1
+	bcryptCost       = bcrypt.MinCost
 	clockTime  int64 = 1000
 	id               = "5627a05a-111a-4ba8-977b-9ba0d17c4793"
 
@@ -31,12 +31,16 @@ const (
 
 var anyError = errors.New("any")
 
-var conf *viper.Viper
+func conf() *viper.Viper {
+	c := viper.New()
+	c.Set("auth.bcryptCost", bcryptCost) // tested in register success test case under mock user repo
+	c.Set("auth.sessionLength", sessionLength)
+
+	return c
+}
 
 func init() {
-	conf = viper.New()
-	conf.Set("auth.bcryptCost", bcryptCost)       // tested in register success test case under mock user repo
-	conf.Set("auth.sessionLength", sessionLength) // tested in register & login test cases @ the end result check
+	// tested in register & login test cases @ the end result check
 }
 
 func TestUserService_GetSession(t *testing.T) {
@@ -96,8 +100,7 @@ func TestUserService_GetSession(t *testing.T) {
 		t.Run(tc.tcName, func(t *testing.T) {
 			t.Parallel()
 
-			copyConf := *conf
-			localConf := &copyConf
+			config := conf()
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
@@ -109,7 +112,7 @@ func TestUserService_GetSession(t *testing.T) {
 
 			tc.configure(t, &tc, mockSessionRepo)
 
-			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, localConf)
+			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, config)
 			userId, err := userService.GetSession(context.Background(), tc.userId)
 
 			if errors.Is(tc.expectedErr, anyError) {
@@ -257,8 +260,7 @@ func TestUserService_Register(t *testing.T) {
 		t.Run(tc.tcName, func(t *testing.T) {
 			t.Parallel()
 
-			copyConf := *conf
-			localConf := &copyConf
+			config := conf()
 
 			request := &common.UserRegisterRequest{
 				Email:    tc.email,
@@ -275,9 +277,9 @@ func TestUserService_Register(t *testing.T) {
 				mockIdProvider.EXPECT().NewID().Return(id, nil).AnyTimes()
 			}
 
-			tc.configure(t, &tc, localConf, mockUserRepo, mockSessionRepo, mockIdProvider)
+			tc.configure(t, &tc, config, mockUserRepo, mockSessionRepo, mockIdProvider)
 
-			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, localConf)
+			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, config)
 			sid, err := userService.Register(context.Background(), request)
 
 			if errors.Is(tc.expectedErr, anyError) {
@@ -385,8 +387,7 @@ func TestUserService_Login(t *testing.T) {
 		t.Run(tc.tcName, func(t *testing.T) {
 			t.Parallel()
 
-			copyConf := *conf
-			localConf := &copyConf
+			config := conf()
 
 			request := &common.UserLoginRequest{
 				Email:    tc.email,
@@ -403,7 +404,7 @@ func TestUserService_Login(t *testing.T) {
 
 			tc.configure(t, &tc, mockUserRepo, mockSessionRepo)
 
-			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, localConf)
+			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, config)
 			sid, err := userService.Login(context.Background(), request)
 
 			if errors.Is(tc.expectedErr, anyError) {
@@ -453,8 +454,7 @@ func TestUserService_Logout(t *testing.T) {
 		t.Run(tc.tcName, func(t *testing.T) {
 			t.Parallel()
 
-			copyConf := *conf
-			localConf := &copyConf
+			config := conf()
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
@@ -466,7 +466,7 @@ func TestUserService_Logout(t *testing.T) {
 
 			tc.configure(t, &tc, mockSessionRepo)
 
-			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, localConf)
+			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, config)
 			err := userService.Logout(context.Background(), tc.sessionId, tc.userId)
 
 			if errors.Is(tc.expectedErr, anyError) {
@@ -509,8 +509,7 @@ func TestUserService_LogoutAll(t *testing.T) {
 		t.Run(tc.tcName, func(t *testing.T) {
 			t.Parallel()
 
-			copyConf := *conf
-			localConf := &copyConf
+			config := conf()
 
 			ctrl := gomock.NewController(t)
 			defer ctrl.Finish()
@@ -522,7 +521,7 @@ func TestUserService_LogoutAll(t *testing.T) {
 
 			tc.configure(t, &tc, mockSessionRepo)
 
-			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, localConf)
+			userService := NewUserService(getClock(ctrl), mockIdProvider, mockUserRepo, mockSessionRepo, config)
 			err := userService.LogoutAll(context.Background(), tc.userId)
 
 			if errors.Is(tc.expectedErr, anyError) {
