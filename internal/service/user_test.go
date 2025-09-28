@@ -94,6 +94,8 @@ func TestUserService_GetSession(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.tcName, func(t *testing.T) {
+			t.Parallel()
+
 			copyConf := *conf
 			localConf := &copyConf
 
@@ -249,6 +251,8 @@ func TestUserService_Register(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.tcName, func(t *testing.T) {
+			t.Parallel()
+
 			copyConf := *conf
 			localConf := &copyConf
 
@@ -375,6 +379,8 @@ func TestUserService_Login(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.tcName, func(t *testing.T) {
+			t.Parallel()
+
 			copyConf := *conf
 			localConf := &copyConf
 
@@ -441,6 +447,8 @@ func TestUserService_Logout(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.tcName, func(t *testing.T) {
+			t.Parallel()
+
 			copyConf := *conf
 			localConf := &copyConf
 
@@ -495,6 +503,8 @@ func TestUserService_LogoutAll(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.tcName, func(t *testing.T) {
+			t.Parallel()
+
 			copyConf := *conf
 			localConf := &copyConf
 
