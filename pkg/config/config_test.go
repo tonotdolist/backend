@@ -35,7 +35,7 @@ func TestConfigLoad(t *testing.T) {
 		)
 
 		_, err := NewConfig(strings.NewReader(data), "yaml")
-		require.NoError(t, err, "Unexpected error when initializing config.")
+
 		assert.NotNil(t, err, "Expected error caused by missing required key.")
 	})
 
@@ -45,7 +45,7 @@ func TestConfigLoad(t *testing.T) {
 		)
 
 		_, err := NewConfig(strings.NewReader(data), "yaml")
-		require.NoError(t, err, "Unexpected error when initializing config.")
+
 		assert.NotNil(t, err, "Expected error caused by malformatted YAML config.")
 	})
 }
