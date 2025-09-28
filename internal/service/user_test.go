@@ -38,7 +38,7 @@ func init() {
 	conf.Set("auth.sessionLength", sessionLength)
 }
 
-func TestUserServiceGetSession(t *testing.T) {
+func TestUserService_GetSession(t *testing.T) {
 	type testcase struct {
 		tcName      string
 		sessionId   string
@@ -408,7 +408,7 @@ func TestUserService_Login(t *testing.T) {
 	}
 }
 
-func TestUserServiceLogout(t *testing.T) {
+func TestUserService_Logout(t *testing.T) {
 	type testcase struct {
 		tcName      string
 		sessionId   string
@@ -465,7 +465,7 @@ func TestUserServiceLogout(t *testing.T) {
 	}
 }
 
-func TestUserServiceLogoutAll(t *testing.T) {
+func TestUserService_LogoutAll(t *testing.T) {
 	type testcase struct {
 		tcName      string
 		userId      string
