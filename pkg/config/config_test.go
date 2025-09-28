@@ -19,7 +19,7 @@ func TestConfigLoad(t *testing.T) {
 
 	t.Run("SuccessfulConfig", func(t *testing.T) {
 		const (
-			data = key + ": " + value + "g\n"
+			data = key + ": " + value + "\n"
 		)
 
 		conf, err := NewConfig(strings.NewReader(data), "yaml")
