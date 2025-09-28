@@ -6,6 +6,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"golang.org/x/crypto/bcrypt"
 	"testing"
 	"time"
@@ -110,13 +111,13 @@ func TestUserService_GetSession(t *testing.T) {
 			userId, err := userService.GetSession(context.Background(), tc.userId)
 
 			if errors.Is(tc.expectedErr, anyError) {
-				assert.NotNil(t, err)
+				assert.NotNil(t, err, "Expected error. ")
 			} else {
-				assert.ErrorIs(t, err, tc.expectedErr)
+				assert.ErrorIs(t, err, tc.expectedErr, "Error does not match expected error.")
 			}
 
 			if tc.validResult {
-				assert.Equal(t, tc.userId, userId)
+				assert.Equal(t, tc.userId, userId, "Test case user id does not match with result user id.")
 			}
 		})
 	}
@@ -272,15 +273,15 @@ func TestUserService_Register(t *testing.T) {
 			sid, err := userService.Register(context.Background(), request)
 
 			if errors.Is(tc.expectedErr, anyError) {
-				assert.NotNil(t, err)
+				assert.NotNil(t, err, "Error expected.")
 			} else {
-				assert.ErrorIs(t, err, tc.expectedErr)
+				assert.ErrorIs(t, err, tc.expectedErr, "Error does not match expected error.")
 			}
 
 			if tc.validResult {
-				assert.Equal(t, sid, id)
+				assert.Equal(t, sid, id, "Expected final session id to match the correct session id.")
 			} else {
-				assert.NotEqual(t, sid, id)
+				assert.NotEqual(t, sid, id, "Expected final session id to not match the correct session id.")
 			}
 		})
 	}
@@ -311,7 +312,7 @@ func TestUserService_Login(t *testing.T) {
 				mockUserRepo.EXPECT().GetByEmail(gomock.Any(), gomock.Eq(tc.email)).DoAndReturn(func(ctx context.Context, argEmail string) (*model.User, error) {
 					hashedPwd, err := bcrypt.GenerateFromPassword([]byte(password), bcryptCost)
 
-					assert.NoErrorf(t, err, "error generating hashed password: %v", err)
+					require.NoError(t, err, "error generating hashed password")
 
 					return &model.User{
 						UserId:   id,
@@ -359,7 +360,7 @@ func TestUserService_Login(t *testing.T) {
 				mockUserRepo.EXPECT().GetByEmail(gomock.Any(), gomock.Eq(tc.email)).DoAndReturn(func(ctx context.Context, argEmail string) (*model.User, error) {
 					hashedPwd, err := bcrypt.GenerateFromPassword([]byte(password), bcryptCost)
 
-					assert.NoErrorf(t, err, "error generating hashed password: %v", err)
+					require.NoErrorf(t, err, "error generating hashed password")
 
 					return &model.User{
 						UserId:   id,
@@ -396,13 +397,13 @@ func TestUserService_Login(t *testing.T) {
 			sid, err := userService.Login(context.Background(), request)
 
 			if errors.Is(tc.expectedErr, anyError) {
-				assert.NotNil(t, err)
+				assert.NotNil(t, err, "Expected error. ")
 			} else {
-				assert.ErrorIs(t, err, tc.expectedErr)
+				assert.ErrorIs(t, err, tc.expectedErr, "Error does not match expected error.")
 			}
 
 			if tc.validResult {
-				assert.Equal(t, sid, id)
+				assert.Equal(t, sid, id, "Expected session id to match the correct session id.")
 			}
 		})
 	}
@@ -457,9 +458,9 @@ func TestUserService_Logout(t *testing.T) {
 			err := userService.Logout(context.Background(), tc.sessionId, tc.userId)
 
 			if errors.Is(tc.expectedErr, anyError) {
-				assert.NotNil(t, err)
+				assert.NotNil(t, err, "Expected error. ")
 			} else {
-				assert.ErrorIs(t, err, tc.expectedErr)
+				assert.ErrorIs(t, err, tc.expectedErr, "Error does not match expected error.")
 			}
 		})
 	}
@@ -511,9 +512,9 @@ func TestUserService_LogoutAll(t *testing.T) {
 			err := userService.LogoutAll(context.Background(), tc.userId)
 
 			if errors.Is(tc.expectedErr, anyError) {
-				assert.NotNil(t, err)
+				assert.NotNil(t, err, "Expected error. ")
 			} else {
-				assert.ErrorIs(t, err, tc.expectedErr)
+				assert.ErrorIs(t, err, tc.expectedErr, "Error does not match expected error.")
 			}
 		})
 	}

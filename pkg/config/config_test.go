@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"strings"
 	"testing"
 )
@@ -23,7 +24,7 @@ func TestConfigLoad(t *testing.T) {
 
 		conf, err := NewConfig(strings.NewReader(data), "yaml")
 
-		assert.Nil(t, err, "Unexpected error when initializing config.")
+		require.NoError(t, err, "Unexpected error when initializing config.")
 		assert.Equal(t, length, len(conf.AllKeys()), "The length of the config keys do not match.")
 		assert.Equal(t, value, conf.Get(key), "The value of %s in the config does not match the expected value.", key)
 	})
@@ -34,6 +35,7 @@ func TestConfigLoad(t *testing.T) {
 		)
 
 		_, err := NewConfig(strings.NewReader(data), "yaml")
+		require.NoError(t, err, "Unexpected error when initializing config.")
 		assert.NotNil(t, err, "Expected error caused by missing required key.")
 	})
 
@@ -43,7 +45,7 @@ func TestConfigLoad(t *testing.T) {
 		)
 
 		_, err := NewConfig(strings.NewReader(data), "yaml")
-
+		require.NoError(t, err, "Unexpected error when initializing config.")
 		assert.NotNil(t, err, "Expected error caused by malformatted YAML config.")
 	})
 }
